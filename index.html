@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Japan · May 2026</title>
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --bg-grouped: #ffffff;
+    --separator: rgba(60, 60, 67, 0.12);
+    --label: #000000;
+    --label-secondary: rgba(60, 60, 67, 0.6);
+    --label-tertiary: rgba(60, 60, 67, 0.3);
+    --blue: #007aff;
+    --indigo: #5856d6;
+    --orange: #ff9500;
+    --red: #ff3b30;
+    --green: #34c759;
+    --pink: #ff2d55;
+    --teal: #5ac8fa;
+    --purple: #af52de;
+    --gray-fill: rgba(120, 120, 128, 0.12);
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --bg-grouped: #1c1c1e;
+      --separator: rgba(84, 84, 88, 0.65);
+      --label: #ffffff;
+      --label-secondary: rgba(235, 235, 245, 0.6);
+      --label-tertiary: rgba(235, 235, 245, 0.3);
+      --gray-fill: rgba(120, 120, 128, 0.24);
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--label);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+    font-size: 17px; line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+  body { padding-bottom: calc(72px + var(--safe-bottom)); min-height: 100vh; }
+
+  .hero { padding: calc(var(--safe-top) + 16px) 20px 8px; }
+  .hero .eyebrow {
+    font-size: 13px; font-weight: 600; color: var(--blue);
+    letter-spacing: -0.08px; text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: 0.37px;
+    margin: 4px 0 0; line-height: 1.1;
+  }
+  .hero .subtitle {
+    font-size: 15px; color: var(--label-secondary);
+    margin-top: 6px; letter-spacing: -0.24px;
+  }
+
+  .section-header {
+    font-size: 13px; font-weight: 400; color: var(--label-secondary);
+    text-transform: uppercase; letter-spacing: -0.08px;
+    padding: 24px 20px 6px;
+  }
+
+  .list {
+    background: var(--bg-grouped);
+    margin: 0 16px; border-radius: 12px; overflow: hidden;
+  }
+  .row {
+    display: flex; align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--separator);
+    gap: 12px; min-height: 44px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; font-size: 15px; font-weight: 600;
+    margin-top: 1px;
+  }
+  .row .body { flex: 1; min-width: 0; }
+  .row .title { font-size: 16px; font-weight: 400; letter-spacing: -0.32px; }
+  .row .detail { font-size: 14px; color: var(--label-secondary); margin-top: 2px; letter-spacing: -0.15px; }
+
+  .map-row {
+    text-decoration: none; color: inherit;
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--separator);
+    gap: 12px; min-height: 44px;
+    transition: background 0.1s;
+  }
+  .map-row:last-child { border-bottom: none; }
+  .map-row:active { background: var(--gray-fill); }
+  .map-row .pin {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; font-size: 14px; font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .map-row .body { flex: 1; min-width: 0; }
+  .map-row .title { font-size: 16px; letter-spacing: -0.32px; font-weight: 500; }
+  .map-row .detail { font-size: 13px; color: var(--label-secondary); margin-top: 1px; letter-spacing: -0.08px; }
+  .map-row .chevron { color: var(--label-tertiary); font-size: 18px; margin-left: 6px; font-weight: 300; }
+
+  .day-card {
+    background: var(--bg-grouped);
+    margin: 12px 16px; border-radius: 14px;
+    padding: 18px;
+  }
+  .day-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between; margin-bottom: 4px;
+  }
+  .day-date {
+    font-size: 13px; font-weight: 600; color: var(--blue);
+    letter-spacing: -0.08px; text-transform: uppercase;
+  }
+  .day-day { font-size: 13px; color: var(--label-tertiary); font-weight: 500; }
+  .day-title {
+    font-size: 22px; font-weight: 700; letter-spacing: 0.35px;
+    margin: 2px 0 10px; line-height: 1.2;
+  }
+  .day-summary {
+    font-size: 15px; color: var(--label-secondary);
+    letter-spacing: -0.24px; margin-bottom: 12px;
+  }
+  .stops { list-style: none; padding: 0; margin: 0; }
+  .stops li {
+    display: flex; gap: 10px; padding: 6px 0;
+    font-size: 15px; letter-spacing: -0.24px;
+    align-items: flex-start;
+  }
+  .stops li::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--label-tertiary);
+    margin-top: 9px; flex-shrink: 0;
+  }
+  .pill {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    color: var(--orange); background: rgba(255, 149, 0, 0.12);
+    padding: 3px 8px; border-radius: 6px; margin-left: 6px;
+    letter-spacing: 0.1px; text-transform: uppercase; vertical-align: middle;
+  }
+  .pill.green { color: var(--green); background: rgba(52, 199, 89, 0.12); }
+  .pill.blue { color: var(--blue); background: rgba(0, 122, 255, 0.12); }
+  .pill.red { color: var(--red); background: rgba(255, 59, 48, 0.12); }
+  .pill.purple { color: var(--purple); background: rgba(175, 82, 222, 0.12); }
+  .note {
+    background: var(--gray-fill);
+    border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; color: var(--label-secondary);
+    margin-top: 12px; letter-spacing: -0.08px; line-height: 1.45;
+  }
+  .note strong { color: var(--label); font-weight: 600; }
+
+  .bundle {
+    border-radius: 10px; padding: 12px 14px;
+    margin-top: 12px; font-size: 14px; line-height: 1.5;
+  }
+  .bundle .bundle-title {
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 6px; letter-spacing: -0.1px;
+  }
+  .bundle .bundle-meta {
+    font-size: 12px; color: var(--label-secondary);
+    margin-bottom: 6px; font-weight: 500;
+  }
+  .bundle ul { list-style: none; padding: 0; margin: 0; }
+  .bundle ul li {
+    padding: 3px 0; font-size: 14px;
+    color: var(--label); letter-spacing: -0.15px;
+  }
+  .bundle ul li::before { content: "·"; margin-right: 6px; color: var(--label-tertiary); }
+  .bundle.blue { background: rgba(0,122,255,0.08); }
+  .bundle.blue .bundle-title { color: var(--blue); }
+  .bundle.orange { background: rgba(255,149,0,0.08); }
+  .bundle.orange .bundle-title { color: var(--orange); }
+  .bundle.green { background: rgba(52,199,89,0.08); }
+  .bundle.green .bundle-title { color: var(--green); }
+
+  .region-card {
+    background: var(--bg-grouped);
+    margin: 12px 16px; border-radius: 14px; overflow: hidden;
+  }
+  .region-header {
+    padding: 16px 16px 8px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .region-swatch {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  }
+  .region-title {
+    font-size: 22px; font-weight: 700;
+    letter-spacing: 0.35px; flex: 1;
+  }
+  .region-count {
+    font-size: 13px; color: var(--label-tertiary); font-weight: 600;
+  }
+  .region-desc {
+    font-size: 13px; color: var(--label-secondary);
+    padding: 0 16px 8px; letter-spacing: -0.08px;
+  }
+
+  .pin-blue { background: var(--blue); }
+  .pin-orange { background: var(--orange); }
+  .pin-red { background: var(--red); }
+  .pin-purple { background: var(--purple); }
+  .pin-green { background: var(--green); }
+  .pin-indigo { background: var(--indigo); }
+  .pin-teal { background: var(--teal); }
+  .pin-pink { background: var(--pink); }
+  .pin-gray { background: #8e8e93; }
+
+  .tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(249, 249, 249, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 0.5px solid var(--separator);
+    display: flex; padding: 6px 0 var(--safe-bottom);
+    z-index: 100;
+  }
+  @media (prefers-color-scheme: dark) {
+    .tabbar { background: rgba(22, 22, 22, 0.85); }
+  }
+  .tab {
+    flex: 1; text-align: center;
+    padding: 6px 0 2px;
+    color: var(--label-secondary);
+    font-size: 10px; font-weight: 500;
+    cursor: pointer; border: none; background: none;
+    font-family: inherit; letter-spacing: -0.05px;
+    transition: color 0.15s ease;
+  }
+  .tab .glyph {
+    display: block; font-size: 22px;
+    line-height: 1; margin-bottom: 2px;
+  }
+  .tab.active { color: var(--blue); }
+  .tab:active { opacity: 0.5; }
+
+  .tab-content { display: none; animation: fadeIn 0.2s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .link-row {
+    text-decoration: none; color: var(--label);
+    display: flex; align-items: center;
+    padding: 14px 16px;
+    border-bottom: 0.5px solid var(--separator);
+    gap: 12px;
+  }
+  .link-row:last-child { border-bottom: none; }
+  .link-row:active { background: var(--gray-fill); }
+  .link-row .chevron {
+    color: var(--label-tertiary); font-size: 18px;
+    margin-left: auto; font-weight: 300;
+  }
+  .link-row .icon {
+    width: 30px; height: 30px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; font-size: 16px; font-weight: 600;
+  }
+  .link-row .label-stack {
+    display: flex; flex-direction: column;
+    min-width: 0; flex: 1;
+  }
+  .link-row .label-stack .label-primary { font-size: 16px; letter-spacing: -0.32px; }
+  .link-row .label-stack .label-secondary { font-size: 13px; color: var(--label-secondary); letter-spacing: -0.08px; }
+
+  .bg-blue { background: var(--blue); }
+  .bg-orange { background: var(--orange); }
+  .bg-green { background: var(--green); }
+  .bg-red { background: var(--red); }
+  .bg-purple { background: var(--purple); }
+  .bg-indigo { background: var(--indigo); }
+  .bg-teal { background: var(--teal); }
+  .bg-pink { background: var(--pink); }
+  .bg-gray { background: #8e8e93; }
+
+  .footer {
+    text-align: center; font-size: 12px;
+    color: var(--label-tertiary);
+    padding: 24px 20px 32px; letter-spacing: -0.08px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ITINERARY TAB ============ -->
+<div class="tab-content active" id="tab-itinerary">
+  <div class="hero">
+    <div class="eyebrow">Family Trip · 11 days</div>
+    <h1>Japan</h1>
+    <div class="subtitle">May 23 – June 2, 2026</div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 23</span>
+      <span class="day-day">Saturday</span>
+    </div>
+    <div class="day-title">Arrival</div>
+    <div class="day-summary">Wei Jie arrives Haneda 22:30 and overnights at the airport. Parents already settled in Shinjuku.</div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 24</span>
+      <span class="day-day">Sunday</span>
+    </div>
+    <div class="day-title">Atami Fireworks <span class="pill red">Event</span></div>
+    <div class="day-summary">Meet at Odawara, drop bags at Airbnb, then train to Atami for the museum and fireworks over the bay.</div>
+    <ul class="stops">
+      <li>~14:00 — Meet at Odawara station</li>
+      <li>15:00 – 16:30 — MOA Museum of Art</li>
+      <li>17:00 – 19:00 — Atami town, dinner near Sun Beach</li>
+      <li><strong>20:20 – 20:40 — Atami Marine Fireworks</strong></li>
+      <li>~21:30 — Train back to Odawara</li>
+    </ul>
+    <div class="note"><strong>Tip:</strong> Buy return train tickets before fireworks. Atami station gets packed — let the surge pass at a café for 30 min.</div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 25</span>
+      <span class="day-day">Monday</span>
+    </div>
+    <div class="day-title">Hakone Loop <span class="pill blue">Easy</span></div>
+    <div class="day-summary">Car pickup at 08:00. Classic Hakone — short drives, big views. Soft start to the driving week.</div>
+    <ul class="stops">
+      <li>Hakone Shrine + Heiwa-no-Torii</li>
+      <li>Owakudani (volcanic vents, black eggs)</li>
+      <li>Old Tōkaidō Cedar Avenue</li>
+      <li>Hakone Ashinoko Observation Park</li>
+      <li>Hakone Gora Park (optional)</li>
+    </ul>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 26 – 28</span>
+      <span class="day-day">Tue – Thu</span>
+    </div>
+    <div class="day-title">Weather-Driven Days <span class="pill purple">Flexible</span></div>
+    <div class="day-summary">Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00.</div>
+
+    <div class="bundle blue">
+      <div class="bundle-title">☀ Fuji Five Lakes</div>
+      <div class="bundle-meta">Pick on a clear Fuji day · ~2hr from Odawara</div>
+      <ul>
+        <li>Arakurayama Sengen Park (Chureito Pagoda · 398 steps)</li>
+        <li>Kanadorii (gold torii)</li>
+        <li>Oshino Hakkai ponds</li>
+        <li>Lake Yamanaka panorama</li>
+      </ul>
+    </div>
+
+    <div class="bundle orange">
+      <div class="bundle-title">🌊 Izu — Hard Day</div>
+      <div class="bundle-meta">Depart 05:00 · long drive south</div>
+      <ul>
+        <li>Shimoda Park (Shiroyama)</li>
+        <li>Shirahama Beach (weather permitting)</li>
+        <li>Kawazu Seven Waterfalls</li>
+        <li>Joren Falls</li>
+      </ul>
+    </div>
+
+    <div class="bundle green">
+      <div class="bundle-title">🏞 Izu — Easy Day</div>
+      <div class="bundle-meta">Scenic ridge driving</div>
+      <ul>
+        <li>Izu Skyline drive</li>
+        <li>Mt. Komuro Ridge Walk "Misora"</li>
+        <li>Mt. Omuro (chairlift to crater rim)</li>
+        <li>Jogasaki Coast + Kadowaki Suspension Bridge</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 29</span>
+      <span class="day-day">Friday</span>
+    </div>
+    <div class="day-title">Buffer + Manazuru <span class="pill green">Light</span></div>
+    <div class="day-summary">Backup for a missed bundle, otherwise Cape Manazuru. Return car by 18:30.</div>
+    <ul class="stops">
+      <li>Cape Manazuru (20 min from Odawara)</li>
+      <li>Late lunch in Odawara</li>
+      <li><strong>Return car by 18:30 sharp</strong></li>
+    </ul>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 30</span>
+      <span class="day-day">Saturday</span>
+    </div>
+    <div class="day-title">Move to Urayasu · Adachi Fireworks <span class="pill red">Event</span></div>
+    <div class="day-summary">Train from Odawara, drop luggage at Bay Hotel first, then Ueno, then Arakawa for fireworks.</div>
+    <ul class="stops">
+      <li>Morning — Pack out, train to Urayasu</li>
+      <li>Midday — Drop luggage at Bay Hotel</li>
+      <li>Afternoon — Ueno Park, Shinobazu Pond</li>
+      <li>~17:00 — Head to Arakawakosuge Park</li>
+      <li><strong>19:20 – 20:20 — Adachi Fireworks</strong></li>
+    </ul>
+    <div class="note"><strong>Heads-up:</strong> 700K attendees. Arrive by 17:00 to find a spot. Exit via Machiya, Senju-Ohashi, or Adachi-Odai — not Kita-Senju.</div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">May 31</span>
+      <span class="day-day">Sunday</span>
+    </div>
+    <div class="day-title">Yokohama Day</div>
+    <div class="day-summary">Harbor walks, traditional garden, museum. More breathing room than Kamakura on a weekend.</div>
+    <ul class="stops">
+      <li>Sankeien Garden</li>
+      <li>Red Brick Warehouse + harbor</li>
+      <li>Harbor View Park Observatory</li>
+      <li>Yokohama Air Cabin (optional)</li>
+    </ul>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">June 1</span>
+      <span class="day-day">Monday</span>
+    </div>
+    <div class="day-title">Kamakura + Enoshima</div>
+    <div class="day-summary">Weekday = much quieter. Temples and seaside.</div>
+    <ul class="stops">
+      <li>Hase Temple</li>
+      <li>Tsurugaoka Hachimangu</li>
+      <li>Meigetsu-in</li>
+      <li>Enoshima (sea breeze, sunset)</li>
+    </ul>
+  </div>
+
+  <div class="day-card">
+    <div class="day-header">
+      <span class="day-date">June 2</span>
+      <span class="day-day">Tuesday</span>
+    </div>
+    <div class="day-title">Departure</div>
+    <div class="day-summary">Half day for souvenirs. Be at Haneda by 20:30 for 23:30 flight.</div>
+    <ul class="stops">
+      <li>Morning — Souvenirs, light Tokyo walk</li>
+      <li>~17:00 — Pack and check out</li>
+      <li>~19:00 — Leave Urayasu for Haneda</li>
+      <li><strong>23:30 — Flight to KLIA</strong></li>
+    </ul>
+  </div>
+
+  <div class="footer">Plan subject to weather and group energy</div>
+</div>
+
+<!-- ============ MAP TAB ============ -->
+<div class="tab-content" id="tab-map">
+  <div class="hero">
+    <div class="eyebrow">Tap to open Apple Maps</div>
+    <h1>Map</h1>
+    <div class="subtitle">All places grouped by region</div>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: #8e8e93"></div>
+      <div class="region-title">Home Bases</div>
+      <div class="region-count">4</div>
+    </div>
+    <div class="region-desc">Where we stay, fly, and return the car</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.5442587,139.7683199&q=Haneda%20Airport%20Terminal%203">
+      <div class="pin pin-gray">✈</div>
+      <div class="body">
+        <div class="title">Haneda Airport · Terminal 3</div>
+        <div class="detail">Arrival May 23 · Departure June 2</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2564449,139.1553932&q=Odawara%20Station">
+      <div class="pin pin-gray">🏡</div>
+      <div class="body">
+        <div class="title">Odawara · Airbnb area</div>
+        <div class="detail">May 24 – May 30</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.6653379,139.8946616&q=Bay%20Hotel%20Urayasu-ekimae">
+      <div class="pin pin-gray">🛏</div>
+      <div class="body">
+        <div class="title">Bay Hotel Urayasu-ekimae</div>
+        <div class="detail">May 30 – June 2</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2564449,139.1553932&q=Toyota%20Rent%20a%20Car%20Odawara">
+      <div class="pin pin-gray">🚗</div>
+      <div class="body">
+        <div class="title">Toyota Rent a Car · Odawara</div>
+        <div class="detail">Pickup May 25 · Return May 29</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--pink)"></div>
+      <div class="region-title">Atami</div>
+      <div class="region-count">2</div>
+    </div>
+    <div class="region-desc">May 24 · Museum and fireworks</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.1092776,139.0751998&q=MOA%20Museum%20of%20Art">
+      <div class="pin pin-pink">1</div>
+      <div class="body">
+        <div class="title">MOA Museum of Art</div>
+        <div class="detail">Hilltop · bay view at golden hour</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.098029,139.0767083&q=Atami%20Sun%20Beach">
+      <div class="pin pin-pink">2</div>
+      <div class="body">
+        <div class="title">Atami Sun Beach</div>
+        <div class="detail">Fireworks viewing · 20:20–20:40</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--blue)"></div>
+      <div class="region-title">Hakone</div>
+      <div class="region-count">5</div>
+    </div>
+    <div class="region-desc">May 25 · Easy loop day</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.202783,139.0257419&q=Heiwa-no-Torii%20Hakone%20Shrine">
+      <div class="pin pin-blue">1</div>
+      <div class="body">
+        <div class="title">Heiwa-no-Torii (Hakone Shrine)</div>
+        <div class="detail">Iconic lake torii gate</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2436011,139.0197304&q=Owakudani">
+      <div class="pin pin-blue">2</div>
+      <div class="body">
+        <div class="title">Owakudani</div>
+        <div class="detail">Volcanic vents · black eggs</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.198995,139.0297555&q=Old%20Tokaido%20Cedar%20Avenue">
+      <div class="pin pin-blue">3</div>
+      <div class="body">
+        <div class="title">Old Tōkaidō Cedar Avenue</div>
+        <div class="detail">400-year-old cedar walk</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2388482,138.9784643&q=Hakone%20Ashinoko%20Observation%20Park">
+      <div class="pin pin-blue">4</div>
+      <div class="body">
+        <div class="title">Hakone Ashinoko Observation Park</div>
+        <div class="detail">Lake panorama + Fuji on clear days</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2486604,139.0451918&q=Hakone%20Gora%20Park">
+      <div class="pin pin-blue">5</div>
+      <div class="body">
+        <div class="title">Hakone Gora Park</div>
+        <div class="detail">Garden · optional stop</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--red)"></div>
+      <div class="region-title">Fuji Five Lakes</div>
+      <div class="region-count">4</div>
+    </div>
+    <div class="region-desc">Pick on a clear Fuji day · ~2hr from Odawara</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.5012626,138.8013852&q=Arakurayama%20Sengen%20Park">
+      <div class="pin pin-red">1</div>
+      <div class="body">
+        <div class="title">Arakurayama Sengen Park</div>
+        <div class="detail">Chureito Pagoda · 398 steps</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4832338,138.797992&q=Kanadorii">
+      <div class="pin pin-red">2</div>
+      <div class="body">
+        <div class="title">Kanadorii</div>
+        <div class="detail">Gold torii framing Mt. Fuji</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4601656,138.8328364&q=Oshino%20Hakkai">
+      <div class="pin pin-red">3</div>
+      <div class="body">
+        <div class="title">Oshino Hakkai</div>
+        <div class="detail">Crystal-clear spring ponds</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4125913,138.9094189&q=Yamanakako%20Panorama-dai">
+      <div class="pin pin-red">4</div>
+      <div class="body">
+        <div class="title">Yamanakako Panorama-dai</div>
+        <div class="detail">Lake Yamanaka viewpoint</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--orange)"></div>
+      <div class="region-title">Izu South</div>
+      <div class="region-count">4</div>
+    </div>
+    <div class="region-desc">Hard day · deepest south Izu</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.6683097,138.9456637&q=Shimoda%20Park">
+      <div class="pin pin-orange">1</div>
+      <div class="body">
+        <div class="title">Shimoda Park (Shiroyama)</div>
+        <div class="detail">Hillside garden · hydrangeas</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.6894666,138.9728404&q=Shirahama%20Beach%20Shimoda">
+      <div class="pin pin-orange">2</div>
+      <div class="body">
+        <div class="title">Shirahama Beach</div>
+        <div class="detail">White-sand beach (weather permitting)</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.7957781,138.933771&q=Kawazu%20Seven%20Waterfalls">
+      <div class="pin pin-orange">3</div>
+      <div class="body">
+        <div class="title">Kawazu Seven Waterfalls</div>
+        <div class="detail">Forest waterfall walk</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.8719344,138.922155&q=Joren%20Falls">
+      <div class="pin pin-orange">4</div>
+      <div class="body">
+        <div class="title">Joren Falls</div>
+        <div class="detail">Waterfall + wasabi farm</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--green)"></div>
+      <div class="region-title">Izu East</div>
+      <div class="region-count">3</div>
+    </div>
+    <div class="region-desc">Easy day · ridge driving + coast</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.9076446,139.0967583&q=Mount%20Omuro%20chairlift">
+      <div class="pin pin-green">1</div>
+      <div class="body">
+        <div class="title">Mt. Omuro</div>
+        <div class="detail">Chairlift to crater rim</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.8910482,139.1399205&q=Jogasaki%20Coast">
+      <div class="pin pin-green">2</div>
+      <div class="body">
+        <div class="title">Jogasaki Coast</div>
+        <div class="detail">Lava cliff coastline</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.8905303,139.1387426&q=Kadowaki%20Suspension%20Bridge">
+      <div class="pin pin-green">3</div>
+      <div class="body">
+        <div class="title">Kadowaki Suspension Bridge</div>
+        <div class="detail">Dramatic cliff bridge + lighthouse</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--teal)"></div>
+      <div class="region-title">Manazuru</div>
+      <div class="region-count">1</div>
+    </div>
+    <div class="region-desc">May 29 · Buffer day</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.1409876,139.1605902&q=Cape%20Manazuru">
+      <div class="pin pin-teal">1</div>
+      <div class="body">
+        <div class="title">Cape Manazuru</div>
+        <div class="detail">Quiet peninsula · ocean views</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--purple)"></div>
+      <div class="region-title">Tokyo</div>
+      <div class="region-count">2</div>
+    </div>
+    <div class="region-desc">May 30 · Move-in day + fireworks</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.7147557,139.7734312&q=Ueno%20Park">
+      <div class="pin pin-purple">1</div>
+      <div class="body">
+        <div class="title">Ueno Park</div>
+        <div class="detail">Park, shrines, Shinobazu Pond</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.7601032,139.7903535&q=Arakawakosuge%20Ryokuchi%20Park">
+      <div class="pin pin-purple">2</div>
+      <div class="body">
+        <div class="title">Arakawakosuge Park</div>
+        <div class="detail">Adachi Fireworks · 19:20–20:20</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--indigo)"></div>
+      <div class="region-title">Yokohama</div>
+      <div class="region-count">2</div>
+    </div>
+    <div class="region-desc">May 31 · Harbor and gardens</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4170511,139.6588267&q=Sankeien%20Garden">
+      <div class="pin pin-indigo">1</div>
+      <div class="body">
+        <div class="title">Sankeien Garden</div>
+        <div class="detail">Traditional Japanese garden</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4526321,139.6428944&q=Yokohama%20Red%20Brick%20Warehouse">
+      <div class="pin pin-indigo">2</div>
+      <div class="body">
+        <div class="title">Red Brick Warehouse</div>
+        <div class="detail">Historic harbor district</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--pink)"></div>
+      <div class="region-title">Kamakura + Enoshima</div>
+      <div class="region-count">3</div>
+    </div>
+    <div class="region-desc">June 1 · Temples and seaside</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.3124645,139.5330634&q=Hase%20Temple%20Kamakura">
+      <div class="pin pin-pink">1</div>
+      <div class="body">
+        <div class="title">Hase Temple (Hasedera)</div>
+        <div class="detail">Hillside temple · ocean view</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.3259856,139.5563462&q=Tsurugaoka%20Hachimangu">
+      <div class="pin pin-pink">2</div>
+      <div class="body">
+        <div class="title">Tsurugaoka Hachimangu</div>
+        <div class="detail">Major Shinto shrine</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2994178,139.480291&q=Enoshima">
+      <div class="pin pin-pink">3</div>
+      <div class="body">
+        <div class="title">Enoshima</div>
+        <div class="detail">Island · shrines · sunset spot</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="footer">Tap any place to open in Apple Maps</div>
+</div>
+
+<!-- ============ ESSENTIALS TAB ============ -->
+<div class="tab-content" id="tab-essentials">
+  <div class="hero">
+    <div class="eyebrow">Quick Access</div>
+    <h1>Essentials</h1>
+    <div class="subtitle">Live info, key events, reminders</div>
+  </div>
+
+  <div class="section-header">Weather & Fuji</div>
+  <div class="list">
+    <a class="link-row" href="https://tenki.jp" target="_blank" rel="noopener">
+      <div class="icon bg-blue">☁</div>
+      <div class="label-stack">
+        <div class="label-primary">tenki.jp</div>
+        <div class="label-secondary">Japan weather forecast</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="link-row" href="https://fuji-san.info/en/index.html" target="_blank" rel="noopener">
+      <div class="icon bg-red">🗻</div>
+      <div class="label-stack">
+        <div class="label-primary">fuji-san.info</div>
+        <div class="label-secondary">Mt. Fuji live cameras + visibility</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="section-header">Flights</div>
+  <div class="list">
+    <div class="row">
+      <div class="icon bg-blue">✈</div>
+      <div class="body">
+        <div class="title">Parents arrive</div>
+        <div class="detail">May 22 · KLIA 14:15 → Haneda 22:30</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-blue">✈</div>
+      <div class="body">
+        <div class="title">Wei Jie arrives</div>
+        <div class="detail">May 23 · KLIA 14:15 → Haneda 22:30</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-red">✈</div>
+      <div class="body">
+        <div class="title">Return together</div>
+        <div class="detail">June 2 · Haneda 23:30 → KLIA 06:00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Key events</div>
+  <div class="list">
+    <div class="row">
+      <div class="icon bg-red">🎆</div>
+      <div class="body">
+        <div class="title">Atami Marine Fireworks</div>
+        <div class="detail">May 24 (Sun) · 20:20–20:40 · Atami Bay</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-red">🎆</div>
+      <div class="body">
+        <div class="title">Adachi Fireworks Festival</div>
+        <div class="detail">May 30 (Sat) · 19:20–20:20 · Arakawa River</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Reminders</div>
+  <div class="list">
+    <div class="row">
+      <div class="icon bg-orange">!</div>
+      <div class="body">
+        <div class="title">Car return deadline</div>
+        <div class="detail">May 29 · 18:30 sharp · late fees apply</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-blue">i</div>
+      <div class="body">
+        <div class="title">Bay Hotel luggage drop</div>
+        <div class="detail">Drop bags before Ueno on May 30</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-orange">i</div>
+      <div class="body">
+        <div class="title">Atami fireworks return</div>
+        <div class="detail">Buy return ticket BEFORE the show</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Quick reference</div>
+  <div class="list">
+    <div class="row">
+      <div class="icon bg-gray">¥</div>
+      <div class="body">
+        <div class="title">Currency</div>
+        <div class="detail">Japanese Yen · ~MYR 1 = ¥34</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-gray">🔌</div>
+      <div class="body">
+        <div class="title">Power</div>
+        <div class="detail">100V · Type A plug (US-style flat)</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="icon bg-gray">🚇</div>
+      <div class="body">
+        <div class="title">IC Card</div>
+        <div class="detail">Suica / Pasmo · trains, buses, vending</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Save to Home Screen for quick access</div>
+</div>
+
+<!-- ============ TAB BAR ============ -->
+<nav class="tabbar">
+  <button class="tab active" data-tab="itinerary">
+    <span class="glyph">≡</span>
+    Itinerary
+  </button>
+  <button class="tab" data-tab="map">
+    <span class="glyph">⊙</span>
+    Map
+  </button>
+  <button class="tab" data-tab="essentials">
+    <span class="glyph">✱</span>
+    Essentials
+  </button>
+</nav>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  });
+</script>
+
+</body>
+</html>
