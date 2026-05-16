@@ -110,6 +110,69 @@
   .map-row .detail { font-size: 13px; color: var(--label-secondary); margin-top: 1px; letter-spacing: -0.08px; }
   .map-row .chevron { color: var(--label-tertiary); font-size: 18px; margin-left: 6px; font-weight: 300; }
 
+  /* Tappable phone row */
+  .tel-row {
+    text-decoration: none; color: inherit;
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--separator);
+    gap: 12px; min-height: 44px;
+    transition: background 0.1s;
+  }
+  .tel-row:last-child { border-bottom: none; }
+  .tel-row:active { background: var(--gray-fill); }
+  .tel-row .icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; font-size: 16px; font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .tel-row .body { flex: 1; min-width: 0; }
+  .tel-row .title { font-size: 16px; font-weight: 500; letter-spacing: -0.32px; }
+  .tel-row .detail { font-size: 13px; color: var(--label-secondary); margin-top: 1px; letter-spacing: -0.08px; }
+  .tel-row .number {
+    font-size: 22px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.1px; font-variant-numeric: tabular-nums;
+  }
+
+  /* Tap-to-copy address row */
+  .addr-row {
+    background: none; border: none; width: 100%;
+    text-align: left; font-family: inherit; color: inherit;
+    display: flex; align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--separator);
+    gap: 12px; min-height: 44px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .addr-row:last-child { border-bottom: none; }
+  .addr-row:active { background: var(--gray-fill); }
+  .addr-row .icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; font-size: 15px; font-weight: 600;
+    margin-top: 2px;
+  }
+  .addr-row .body { flex: 1; min-width: 0; }
+  .addr-row .name { font-size: 15px; font-weight: 600; letter-spacing: -0.24px; }
+  .addr-row .jp {
+    font-size: 15px; color: var(--label); margin-top: 4px;
+    letter-spacing: 0; line-height: 1.4;
+    font-feature-settings: "palt";
+  }
+  .addr-row .en {
+    font-size: 12px; color: var(--label-secondary);
+    margin-top: 3px; letter-spacing: -0.08px; line-height: 1.35;
+  }
+  .addr-row .copy-hint {
+    font-size: 11px; color: var(--blue); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin-top: 6px; display: inline-block;
+  }
+  .addr-row.copied .copy-hint { color: var(--green); }
+  .addr-row.copied .copy-hint::before { content: "✓ "; }
+
   .day-card {
     background: var(--bg-grouped);
     margin: 12px 16px; border-radius: 14px;
@@ -910,6 +973,48 @@
     <div class="subtitle">Live info, key events, reminders</div>
   </div>
 
+  <div class="section-header">Emergency</div>
+  <div class="list">
+    <a class="tel-row" href="tel:110">
+      <div class="icon" style="background: var(--red)">🚨</div>
+      <div class="body">
+        <div class="title">Police</div>
+        <div class="detail">Tap to call · 警察</div>
+      </div>
+      <div class="number">110</div>
+    </a>
+    <a class="tel-row" href="tel:119">
+      <div class="icon" style="background: var(--orange)">🚑</div>
+      <div class="body">
+        <div class="title">Ambulance / Fire</div>
+        <div class="detail">Tap to call · 救急・消防</div>
+      </div>
+      <div class="number">119</div>
+    </a>
+  </div>
+
+  <div class="section-header">Addresses · tap to copy</div>
+  <div class="list">
+    <button type="button" class="addr-row" data-copy="〒250-0032 神奈川県小田原市風祭9-1（最寄りバス停：東風祭）">
+      <div class="icon bg-orange">🏡</div>
+      <div class="body">
+        <div class="name">Odawara Airbnb · May 24 – 30</div>
+        <div class="jp">〒250-0032 神奈川県小田原市風祭9-1<br>最寄りバス停：東風祭</div>
+        <div class="en">9-1 Kazamatsuri, Odawara, Kanagawa 250-0032<br>Nearest bus stop: Higashi-Kazamatsuri</div>
+        <div class="copy-hint">Tap to copy</div>
+      </div>
+    </button>
+    <button type="button" class="addr-row" data-copy="ベイホテル浦安駅前　〒279-0002 千葉県浦安市北栄1-15-28">
+      <div class="icon bg-indigo">🛏</div>
+      <div class="body">
+        <div class="name">Bay Hotel Urayasu-ekimae · May 30 – June 2</div>
+        <div class="jp">ベイホテル浦安駅前<br>〒279-0002 千葉県浦安市北栄1-15-28</div>
+        <div class="en">Bay Hotel Urayasu-ekimae<br>1-15-28 Kitazakae, Urayasu, Chiba 279-0002</div>
+        <div class="copy-hint">Tap to copy</div>
+      </div>
+    </button>
+  </div>
+
   <div class="section-header">Before Arrival</div>
   <div class="list">
     <a class="link-row" href="https://www.vjw.digital.go.jp/main/#/vjwplo001" target="_blank" rel="noopener">
@@ -1065,6 +1170,35 @@
       tab.classList.add('active');
       document.getElementById('tab-' + target).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  });
+
+  // Tap-to-copy addresses with visual confirmation
+  document.querySelectorAll('.addr-row').forEach(row => {
+    row.addEventListener('click', async () => {
+      const text = row.dataset.copy;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (_) {}
+        document.body.removeChild(ta);
+      }
+      const hint = row.querySelector('.copy-hint');
+      const originalText = hint.textContent;
+      row.classList.add('copied');
+      hint.textContent = 'Copied';
+      setTimeout(() => {
+        row.classList.remove('copied');
+        hint.textContent = originalText;
+      }, 1800);
     });
   });
 </script>
