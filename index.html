@@ -185,6 +185,8 @@
   .bundle.orange .bundle-title { color: var(--orange); }
   .bundle.green { background: rgba(52,199,89,0.08); }
   .bundle.green .bundle-title { color: var(--green); }
+  .bundle.indigo { background: rgba(88,86,214,0.08); }
+  .bundle.indigo .bundle-title { color: var(--indigo); }
 
   .region-card {
     background: var(--bg-grouped);
@@ -334,27 +336,23 @@
 
   <div class="day-card">
     <div class="day-header">
-      <span class="day-date">May 25</span>
-      <span class="day-day">Monday</span>
-    </div>
-    <div class="day-title">Hakone Loop <span class="pill blue">Easy</span></div>
-    <div class="day-summary">Car pickup at 08:00. Classic Hakone — short drives, big views. Soft start to the driving week.</div>
-    <ul class="stops">
-      <li>Hakone Shrine + Heiwa-no-Torii</li>
-      <li>Owakudani (volcanic vents, black eggs)</li>
-      <li>Old Tōkaidō Cedar Avenue</li>
-      <li>Hakone Ashinoko Observation Park</li>
-      <li>Hakone Gora Park (optional)</li>
-    </ul>
-  </div>
-
-  <div class="day-card">
-    <div class="day-header">
-      <span class="day-date">May 26 – 28</span>
-      <span class="day-day">Tue – Thu</span>
+      <span class="day-date">May 25 – 28</span>
+      <span class="day-day">Mon – Thu</span>
     </div>
     <div class="day-title">Weather-Driven Days <span class="pill purple">Flexible</span></div>
-    <div class="day-summary">Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00.</div>
+    <div class="day-summary">Car pickup May 25 · 08:00. Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00. Hakone is the safe default for Day 1.</div>
+
+    <div class="bundle indigo">
+      <div class="bundle-title">⛩ Hakone Loop</div>
+      <div class="bundle-meta">Easy · 40 min from Odawara · safe Day 1 pick</div>
+      <ul>
+        <li>Hakone Shrine + Heiwa-no-Torii</li>
+        <li>Owakudani (volcanic vents, black eggs)</li>
+        <li>Old Tōkaidō Cedar Avenue</li>
+        <li>Hakone Ashinoko Observation Park</li>
+        <li>Hakone Gora Park (optional)</li>
+      </ul>
+    </div>
 
     <div class="bundle blue">
       <div class="bundle-title">☀ Fuji Five Lakes</div>
@@ -427,12 +425,15 @@
       <span class="day-day">Sunday</span>
     </div>
     <div class="day-title">Yokohama Day</div>
-    <div class="day-summary">Harbor walks, traditional garden, museum. More breathing room than Kamakura on a weekend.</div>
+    <div class="day-summary">Harbor walks, traditional garden, museum. End at Osanbashi Pier for the night skyline. More breathing room than Kamakura on a weekend.</div>
     <ul class="stops">
       <li>Sankeien Garden</li>
+      <li>Future Rose Garden (Yamashita Park)</li>
       <li>Red Brick Warehouse + harbor</li>
+      <li>Yokohama Port Museum</li>
+      <li>Yokohama Air Cabin (Sakuragicho ropeway)</li>
       <li>Harbor View Park Observatory</li>
-      <li>Yokohama Air Cabin (optional)</li>
+      <li><strong>Osanbashi Pier — sunset & night view</strong></li>
     </ul>
   </div>
 
@@ -457,13 +458,23 @@
       <span class="day-day">Tuesday</span>
     </div>
     <div class="day-title">Departure</div>
-    <div class="day-summary">Half day for souvenirs. Be at Haneda by 20:30 for 23:30 flight.</div>
+    <div class="day-summary">Half day for souvenirs and a city walk. Be at Haneda by 20:30 for 23:30 flight.</div>
     <ul class="stops">
-      <li>Morning — Souvenirs, light Tokyo walk</li>
+      <li>Morning — Souvenirs, light city walk</li>
       <li>~17:00 — Pack and check out</li>
       <li>~19:00 — Leave Urayasu for Haneda</li>
       <li><strong>23:30 — Flight to KLIA</strong></li>
     </ul>
+    <div class="bundle indigo">
+      <div class="bundle-title">🚶 Tokyo city walk picks</div>
+      <div class="bundle-meta">Choose any · all near central Tokyo</div>
+      <ul>
+        <li>Tokyo Station Marunouchi Building (architecture)</li>
+        <li>Bank of Japan Head Office (Meiji-era façade)</li>
+        <li>Tsukiji Hongan-ji Temple (Indian-inspired)</li>
+        <li>The National Art Center, Tokyo (Roppongi)</li>
+      </ul>
+    </div>
   </div>
 
   <div class="footer">Plan subject to weather and group energy</div>
@@ -753,9 +764,9 @@
     <div class="region-header">
       <div class="region-swatch" style="background: var(--indigo)"></div>
       <div class="region-title">Yokohama</div>
-      <div class="region-count">2</div>
+      <div class="region-count">6</div>
     </div>
-    <div class="region-desc">May 31 · Harbor and gardens</div>
+    <div class="region-desc">May 31 · Harbor, gardens, night skyline</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4170511,139.6588267&q=Sankeien%20Garden">
       <div class="pin pin-indigo">1</div>
       <div class="body">
@@ -764,11 +775,43 @@
       </div>
       <span class="chevron">›</span>
     </a>
-    <a class="map-row" href="https://maps.apple.com/?ll=35.4526321,139.6428944&q=Yokohama%20Red%20Brick%20Warehouse">
+    <a class="map-row" href="https://maps.apple.com/?ll=35.445443,139.650345&q=Future%20Rose%20Garden">
       <div class="pin pin-indigo">2</div>
+      <div class="body">
+        <div class="title">Future Rose Garden</div>
+        <div class="detail">Yamashita Park · 160+ rose varieties</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4526321,139.6428944&q=Yokohama%20Red%20Brick%20Warehouse">
+      <div class="pin pin-indigo">3</div>
       <div class="body">
         <div class="title">Red Brick Warehouse</div>
         <div class="detail">Historic harbor district</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4535539,139.6328378&q=Yokohama%20Port%20Museum">
+      <div class="pin pin-indigo">4</div>
+      <div class="body">
+        <div class="title">Yokohama Port Museum</div>
+        <div class="detail">Port history + Nippon Maru ship</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4514291,139.6314264&q=Yokohama%20Air%20Cabin">
+      <div class="pin pin-indigo">5</div>
+      <div class="body">
+        <div class="title">Yokohama Air Cabin</div>
+        <div class="detail">Sakuragicho ropeway · day or night</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.4501659,139.6462458&q=Osanbashi%20Pier">
+      <div class="pin pin-indigo">6</div>
+      <div class="body">
+        <div class="title">Osanbashi Pier</div>
+        <div class="detail">Wooden deck · iconic night skyline</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -778,7 +821,7 @@
     <div class="region-header">
       <div class="region-swatch" style="background: var(--pink)"></div>
       <div class="region-title">Kamakura + Enoshima</div>
-      <div class="region-count">3</div>
+      <div class="region-count">4</div>
     </div>
     <div class="region-desc">June 1 · Temples and seaside</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.3124645,139.5330634&q=Hase%20Temple%20Kamakura">
@@ -797,11 +840,60 @@
       </div>
       <span class="chevron">›</span>
     </a>
-    <a class="map-row" href="https://maps.apple.com/?ll=35.2994178,139.480291&q=Enoshima">
+    <a class="map-row" href="https://maps.apple.com/?ll=35.3348896,139.5515225&q=Meigetsu-in">
       <div class="pin pin-pink">3</div>
+      <div class="body">
+        <div class="title">Meigetsu-in</div>
+        <div class="detail">Round window view · hydrangea temple</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.2994178,139.480291&q=Enoshima">
+      <div class="pin pin-pink">4</div>
       <div class="body">
         <div class="title">Enoshima</div>
         <div class="detail">Island · shrines · sunset spot</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+  </div>
+
+  <div class="region-card">
+    <div class="region-header">
+      <div class="region-swatch" style="background: var(--purple)"></div>
+      <div class="region-title">Tokyo Central</div>
+      <div class="region-count">4</div>
+    </div>
+    <div class="region-desc">June 2 · City walk picks · pick any</div>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.6810403,139.7638027&q=Marunouchi%20Building%20Tokyo%20Station">
+      <div class="pin pin-purple">1</div>
+      <div class="body">
+        <div class="title">Tokyo Station · Marunouchi Building</div>
+        <div class="detail">Architecture · shops · cafés</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.6867925,139.7712695&q=Bank%20of%20Japan%20Head%20Office">
+      <div class="pin pin-purple">2</div>
+      <div class="body">
+        <div class="title">Bank of Japan Head Office</div>
+        <div class="detail">Meiji-era façade · closed weekends</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.6664862,139.7722836&q=Tsukiji%20Hongan-ji%20Temple">
+      <div class="pin pin-purple">3</div>
+      <div class="body">
+        <div class="title">Tsukiji Hongan-ji Temple</div>
+        <div class="detail">Indian-inspired Buddhist architecture</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.665289,139.726374&q=The%20National%20Art%20Center%20Tokyo">
+      <div class="pin pin-purple">4</div>
+      <div class="body">
+        <div class="title">The National Art Center, Tokyo</div>
+        <div class="detail">Roppongi · closed Tuesdays — check first</div>
       </div>
       <span class="chevron">›</span>
     </a>
