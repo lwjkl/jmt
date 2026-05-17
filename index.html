@@ -177,7 +177,23 @@
     background: var(--bg-grouped);
     margin: 12px 16px; border-radius: 14px;
     padding: 18px;
+    position: relative;
+    transition: box-shadow 0.3s ease;
   }
+  /* Today highlight — soft blue ring, no bouncy effects */
+  .day-card.is-today {
+    box-shadow: 0 0 0 2px var(--blue), 0 4px 16px rgba(0, 122, 255, 0.08);
+  }
+  .today-pill {
+    display: none;
+    font-size: 11px; font-weight: 700;
+    color: white; background: var(--blue);
+    padding: 3px 8px; border-radius: 6px;
+    margin-left: 8px; letter-spacing: 0.3px;
+    text-transform: uppercase; vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-card.is-today .today-pill { display: inline-block; }
   .day-header {
     display: flex; align-items: baseline;
     justify-content: space-between; margin-bottom: 4px;
@@ -406,18 +422,18 @@
     <div class="subtitle">May 23 – June 2, 2026</div>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-23" data-end="2026-05-23">
     <div class="day-header">
-      <span class="day-date">May 23</span>
+      <span class="day-date">May 23<span class="today-pill">Today</span></span>
       <span class="day-day">Saturday</span>
     </div>
     <div class="day-title">Arrival</div>
     <div class="day-summary">Wei Jie arrives Haneda 22:30 and overnights at the airport. Parents already settled in Shinjuku.</div>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-24" data-end="2026-05-24">
     <div class="day-header">
-      <span class="day-date">May 24</span>
+      <span class="day-date">May 24<span class="today-pill">Today</span></span>
       <span class="day-day">Sunday</span>
     </div>
     <div class="day-title">Atami Fireworks <span class="pill red">Event</span></div>
@@ -432,9 +448,9 @@
     <div class="note"><strong>Tip:</strong> Buy return train tickets before fireworks. Atami station gets packed — let the surge pass at a café for 30 min.</div>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-25" data-end="2026-05-28">
     <div class="day-header">
-      <span class="day-date">May 25 – 28</span>
+      <span class="day-date">May 25 – 28<span class="today-pill">Today</span></span>
       <span class="day-day">Mon – Thu</span>
     </div>
     <div class="day-title">Weather-Driven Days <span class="pill purple">Flexible</span></div>
@@ -486,9 +502,9 @@
     </div>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-29" data-end="2026-05-29">
     <div class="day-header">
-      <span class="day-date">May 29</span>
+      <span class="day-date">May 29<span class="today-pill">Today</span></span>
       <span class="day-day">Friday</span>
     </div>
     <div class="day-title">Buffer + Manazuru <span class="pill green">Light</span></div>
@@ -500,9 +516,9 @@
     </ul>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-30" data-end="2026-05-30">
     <div class="day-header">
-      <span class="day-date">May 30</span>
+      <span class="day-date">May 30<span class="today-pill">Today</span></span>
       <span class="day-day">Saturday</span>
     </div>
     <div class="day-title">Move to Urayasu · Adachi Fireworks <span class="pill red">Event</span></div>
@@ -517,9 +533,9 @@
     <div class="note"><strong>Heads-up:</strong> 700K attendees. Arrive by 17:00 to find a spot. Exit via Machiya, Senju-Ohashi, or Adachi-Odai — not Kita-Senju.</div>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-05-31" data-end="2026-05-31">
     <div class="day-header">
-      <span class="day-date">May 31</span>
+      <span class="day-date">May 31<span class="today-pill">Today</span></span>
       <span class="day-day">Sunday</span>
     </div>
     <div class="day-title">Yokohama Day</div>
@@ -535,9 +551,9 @@
     </ul>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-06-01" data-end="2026-06-01">
     <div class="day-header">
-      <span class="day-date">June 1</span>
+      <span class="day-date">June 1<span class="today-pill">Today</span></span>
       <span class="day-day">Monday</span>
     </div>
     <div class="day-title">Kamakura + Enoshima</div>
@@ -550,9 +566,9 @@
     </ul>
   </div>
 
-  <div class="day-card">
+  <div class="day-card" data-start="2026-06-02" data-end="2026-06-02">
     <div class="day-header">
-      <span class="day-date">June 2</span>
+      <span class="day-date">June 2<span class="today-pill">Today</span></span>
       <span class="day-day">Tuesday</span>
     </div>
     <div class="day-title">Departure</div>
@@ -1270,6 +1286,49 @@
       scrollTopBtn.classList.remove('visible');
     });
   });
+
+  // Today highlight + auto-scroll to today's card on first Itinerary visit
+  function highlightToday() {
+    const now = new Date();
+    const today = now.getFullYear() + '-'
+      + String(now.getMonth() + 1).padStart(2, '0') + '-'
+      + String(now.getDate()).padStart(2, '0');
+    let todayCard = null;
+    document.querySelectorAll('.day-card').forEach(card => {
+      const start = card.dataset.start;
+      const end = card.dataset.end;
+      if (!start || !end) return;
+      if (today >= start && today <= end) {
+        card.classList.add('is-today');
+        // Update pill text to include the actual date when range spans multiple days
+        const pill = card.querySelector('.today-pill');
+        if (pill && start !== end) {
+          const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          pill.textContent = 'Today · ' + monthNames[now.getMonth()] + ' ' + now.getDate();
+        }
+        todayCard = card;
+      }
+    });
+    return todayCard;
+  }
+  const todayCard = highlightToday();
+
+  // Auto-scroll to today's card on first Itinerary visit per session
+  let itineraryScrolled = false;
+  function scrollToTodayIfNeeded() {
+    if (itineraryScrolled || !todayCard) return;
+    const itineraryActive = document.getElementById('tab-itinerary').classList.contains('active');
+    if (!itineraryActive) return;
+    // Wait one frame so layout is settled, then scroll
+    requestAnimationFrame(() => {
+      const rect = todayCard.getBoundingClientRect();
+      const offset = window.scrollY + rect.top - 12;
+      window.scrollTo({ top: offset, behavior: 'instant' });
+      itineraryScrolled = true;
+    });
+  }
+  // On page load, Itinerary is the active tab by default
+  scrollToTodayIfNeeded();
 </script>
 
 </body>
