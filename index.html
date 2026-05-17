@@ -198,35 +198,51 @@
   /* Segmented control (List / Map toggle) — corner placement */
   .segmented {
     display: inline-flex;
-    background: rgba(118, 118, 128, 0.12);
+    background: rgba(118, 118, 128, 0.16);
     border-radius: 8px;
     padding: 2px;
     flex-shrink: 0;
-    font-size: 12px;
-    font-weight: 600;
     letter-spacing: -0.06px;
     margin-top: 8px;
+    position: relative;
   }
   @media (prefers-color-scheme: dark) {
-    .segmented { background: rgba(118, 118, 128, 0.24); }
+    .segmented { background: rgba(118, 118, 128, 0.32); }
   }
   .segmented button {
     background: transparent;
     border: none;
-    color: var(--label);
-    padding: 4px 11px;
+    color: var(--label-secondary);
+    padding: 5px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-family: inherit;
     font-size: 12px;
-    font-weight: 600;
-    transition: background 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 500;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, font-weight 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     min-height: 26px;
+    position: relative;
+    z-index: 1;
   }
   .segmented button.active {
-    background: var(--bg-grouped);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
+    background: #ffffff;
+    color: var(--label);
+    font-weight: 600;
+    box-shadow:
+      0 3px 8px rgba(0, 0, 0, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    .segmented button.active {
+      background: #636366;
+      color: #ffffff;
+      box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        0 0 0 0.5px rgba(255, 255, 255, 0.04);
+    }
   }
   .segmented button:active { opacity: 0.6; }
 
@@ -614,12 +630,13 @@
       <span class="day-date">May 30<span class="today-pill">Today</span></span>
       <span class="day-day">Saturday</span>
     </div>
-    <div class="day-title">Move to Urayasu · Adachi Fireworks <span class="pill red">Event</span></div>
-    <div class="day-summary">Train from Odawara, drop luggage at Bay Hotel first, then Ueno, then Arakawa for fireworks.</div>
+    <div class="day-title">Move to Tokyo · Adachi Fireworks <span class="pill red">Event</span></div>
+    <div class="day-summary">Early train from Odawara (~2hr) to drop luggage, then shopping around Tokyo Station / Shinjuku, Tokyo National Museum at Ueno, then Arakawa for fireworks.</div>
     <ul class="stops">
-      <li>Morning — Pack out, train to Urayasu</li>
-      <li>Midday — Drop luggage at Bay Hotel</li>
-      <li>Afternoon — Ueno Park, Shinobazu Pond</li>
+      <li>Early morning — Pack out, train Odawara → Tokyo (~2hr)</li>
+      <li>Late morning — Drop luggage at Bay Hotel, Urayasu</li>
+      <li>Midday — Shopping · Tokyo Station or Shinjuku</li>
+      <li>Afternoon — Tokyo National Museum (Ueno)</li>
       <li>~17:00 — Head to Arakawakosuge Park</li>
       <li><strong>19:20 – 20:20 — Adachi Fireworks</strong></li>
     </ul>
@@ -650,13 +667,14 @@
       <span class="day-day">Monday</span>
     </div>
     <div class="day-title">Kamakura + Enoshima</div>
-    <div class="day-summary">Weekday = much quieter. Temples and seaside.</div>
+    <div class="day-summary">Weekday = much quieter. Temples, shopping street, and seaside.</div>
     <ul class="stops">
       <li>Hase Temple</li>
-      <li>Tsurugaoka Hachimangu</li>
+      <li>Komachi-dori Shopping Street</li>
       <li>Meigetsu-in</li>
       <li>Enoshima (sea breeze, sunset)</li>
     </ul>
+    <div class="note"><strong>Pending:</strong> Tsurugaoka Hachimangu — add if time allows (sits at the end of Komachi-dori, ~5 min walk).</div>
   </div>
 
   <div class="day-card" data-start="2026-06-02" data-end="2026-06-02">
@@ -955,19 +973,27 @@
     <div class="region-header">
       <div class="region-swatch" style="background: var(--purple)"></div>
       <div class="region-title">Tokyo</div>
-      <div class="region-count">2</div>
+      <div class="region-count">3</div>
     </div>
     <div class="region-desc">May 30 · Move-in day + fireworks</div>
-    <a class="map-row" href="https://maps.apple.com/?ll=35.7147557,139.7734312&q=Ueno%20Park">
+    <a class="map-row" href="https://maps.apple.com/?ll=35.6810403,139.7638027&q=Tokyo%20Station">
       <div class="pin pin-purple">1</div>
       <div class="body">
-        <div class="title">Ueno Park</div>
-        <div class="detail">Park, shrines, Shinobazu Pond</div>
+        <div class="title">Tokyo Station / Shinjuku</div>
+        <div class="detail">Midday shopping after luggage drop</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=35.7188575,139.7765135&q=Tokyo%20National%20Museum">
+      <div class="pin pin-purple">2</div>
+      <div class="body">
+        <div class="title">Tokyo National Museum</div>
+        <div class="detail">Ueno · afternoon before fireworks</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.7601032,139.7903535&q=Arakawakosuge%20Ryokuchi%20Park">
-      <div class="pin pin-purple">2</div>
+      <div class="pin pin-purple">3</div>
       <div class="body">
         <div class="title">Arakawakosuge Park</div>
         <div class="detail">Adachi Fireworks · 19:20–20:20</div>
@@ -1048,11 +1074,11 @@
       </div>
       <span class="chevron">›</span>
     </a>
-    <a class="map-row" href="https://maps.apple.com/?ll=35.3259856,139.5563462&q=Tsurugaoka%20Hachimangu">
+    <a class="map-row" href="https://maps.apple.com/?ll=35.3197,139.5510&q=Komachi-dori%20Shopping%20Street">
       <div class="pin pin-pink">2</div>
       <div class="body">
-        <div class="title">Tsurugaoka Hachimangu</div>
-        <div class="detail">Major Shinto shrine</div>
+        <div class="title">Komachi-dori Shopping Street</div>
+        <div class="detail">~360m street · food, souvenirs, crafts</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1258,7 +1284,7 @@
       <div class="icon bg-blue">i</div>
       <div class="body">
         <div class="title">Bay Hotel luggage drop</div>
-        <div class="detail">Drop bags before Ueno on May 30</div>
+        <div class="detail">Drop bags before shopping & museum on May 30</div>
       </div>
     </div>
     <div class="row">
