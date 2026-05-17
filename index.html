@@ -312,6 +312,41 @@
   .tab.active { color: var(--blue); }
   .tab:active { opacity: 0.5; }
 
+  /* Back to top — appears after scrolling past one viewport */
+  .scroll-top {
+    position: fixed;
+    right: 16px;
+    bottom: calc(72px + var(--safe-bottom) + 16px);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(249, 249, 249, 0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border: 0.5px solid var(--separator);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    color: var(--label);
+    font-size: 18px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .scroll-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
+  }
+  .scroll-top:active { opacity: 0.5; transform: scale(0.96); }
+  @media (prefers-color-scheme: dark) {
+    .scroll-top { background: rgba(28, 28, 30, 0.92); }
+  }
+
   .tab-content { display: none; animation: fadeIn 0.2s ease; }
   .tab-content.active { display: block; }
   @keyframes fadeIn {
@@ -1144,6 +1179,13 @@
 </div>
 
 <!-- ============ TAB BAR ============ -->
+<!-- Back to top -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 8.5L7 4.5L11 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
 <nav class="tabbar">
   <button class="tab active" data-tab="itinerary">
     <span class="glyph">≡</span>
@@ -1199,6 +1241,33 @@
         row.classList.remove('copied');
         hint.textContent = originalText;
       }, 1800);
+    });
+  });
+
+  // Back-to-top button: appears after scrolling past one viewport, hidden on tab switch
+  const scrollTopBtn = document.getElementById('scrollTop');
+  let ticking = false;
+  function updateScrollTop() {
+    if (window.scrollY > window.innerHeight) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateScrollTop);
+      ticking = true;
+    }
+  }, { passive: true });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  // Reset on tab switch (new tab always starts at top)
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      scrollTopBtn.classList.remove('visible');
     });
   });
 </script>
