@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>Japan · May 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
     --bg: #f2f2f7;
@@ -179,6 +180,98 @@
     padding: 18px;
     position: relative;
     transition: box-shadow 0.3s ease;
+  }
+
+  /* Hero variant with corner toggle */
+  .hero-with-toggle .hero-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hero-with-toggle .hero-row h1 {
+    margin: 4px 0 0;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Segmented control (List / Map toggle) — corner placement */
+  .segmented {
+    display: inline-flex;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 8px;
+    padding: 2px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.06px;
+    margin-top: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .segmented { background: rgba(118, 118, 128, 0.24); }
+  }
+  .segmented button {
+    background: transparent;
+    border: none;
+    color: var(--label);
+    padding: 4px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 26px;
+  }
+  .segmented button.active {
+    background: var(--bg-grouped);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
+  }
+  .segmented button:active { opacity: 0.6; }
+
+  /* Map canvas — shown when toggle is on Map */
+  #map-canvas-view {
+    display: none;
+    margin: 12px 16px;
+    border-radius: 14px;
+    overflow: hidden;
+    height: calc(100vh - 240px);
+    min-height: 400px;
+    background: var(--bg-grouped);
+  }
+  #map-canvas-view.visible { display: block; }
+  #map-canvas { width: 100%; height: 100%; }
+  /* Hide list view when map is active */
+  #map-list-view.hidden { display: none; }
+  /* Leaflet popup tweaks to match iOS aesthetic */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    background: var(--bg-grouped) !important;
+    color: var(--label) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+  }
+  .leaflet-popup-tip { background: var(--bg-grouped) !important; }
+  .leaflet-popup-content {
+    margin: 10px 14px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+  }
+  .leaflet-popup-content .popup-name {
+    font-weight: 600;
+    color: var(--label);
+    margin-bottom: 4px;
+  }
+  .leaflet-popup-content .popup-link {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .leaflet-control-attribution {
+    background: rgba(255,255,255,0.7) !important;
+    font-size: 9px !important;
   }
   /* Today highlight — soft blue ring, no bouncy effects */
   .day-card.is-today {
@@ -596,12 +689,21 @@
 
 <!-- ============ MAP TAB ============ -->
 <div class="tab-content" id="tab-map">
-  <div class="hero">
+  <div class="hero hero-with-toggle">
     <div class="eyebrow">Tap to open Apple Maps</div>
-    <h1>Map</h1>
+    <div class="hero-row">
+      <h1>Map</h1>
+      <div class="segmented" role="tablist">
+        <button type="button" id="seg-list" class="active" aria-pressed="true">List</button>
+        <button type="button" id="seg-map" aria-pressed="false">Map</button>
+      </div>
+    </div>
     <div class="subtitle">All places grouped by region</div>
   </div>
 
+  <div id="map-canvas-view"><div id="map-canvas"></div></div>
+
+  <div id="map-list-view">
   <div class="region-card">
     <div class="region-header">
       <div class="region-swatch" style="background: #8e8e93"></div>
@@ -1013,6 +1115,8 @@
     </a>
   </div>
 
+  </div><!-- /#map-list-view -->
+
   <div class="footer">Tap any place to open in Apple Maps</div>
 </div>
 
@@ -1329,6 +1433,127 @@
   }
   // On page load, Itinerary is the active tab by default
   scrollToTodayIfNeeded();
+
+  // Map view toggle (List ↔ Map) — Leaflet is lazy-loaded on first Map view
+  const segList = document.getElementById('seg-list');
+  const segMap = document.getElementById('seg-map');
+  const mapListView = document.getElementById('map-list-view');
+  const mapCanvasView = document.getElementById('map-canvas-view');
+  let leafletLoaded = false;
+  let mapInstance = null;
+
+  // Region color lookup — matches the pin-* class names
+  const regionColors = {
+    'pin-gray': '#8e8e93',
+    'pin-pink': '#ff2d55',
+    'pin-blue': '#007aff',
+    'pin-red':  '#ff3b30',
+    'pin-orange':'#ff9500',
+    'pin-green':'#34c759',
+    'pin-teal': '#5ac8fa',
+    'pin-purple':'#af52de',
+    'pin-indigo':'#5856d6'
+  };
+
+  function loadLeaflet() {
+    return new Promise((resolve, reject) => {
+      if (window.L) return resolve();
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      s.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+      s.crossOrigin = '';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Leaflet failed to load'));
+      document.head.appendChild(s);
+    });
+  }
+
+  function buildMarker(L, lat, lng, color, name, href) {
+    const html = '<div style="width:18px;height:18px;border-radius:50%;background:' + color
+      + ';border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35);"></div>';
+    const icon = L.divIcon({
+      html: html,
+      className: '',
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -10]
+    });
+    const safeName = name.replace(/"/g, '&quot;');
+    const popupHtml = '<div class="popup-name">' + safeName + '</div>'
+      + '<a class="popup-link" href="' + href + '">Open in Apple Maps →</a>';
+    return L.marker([lat, lng], { icon }).bindPopup(popupHtml);
+  }
+
+  async function initMap() {
+    if (mapInstance) return;
+    try {
+      await loadLeaflet();
+    } catch (e) {
+      mapCanvasView.innerHTML = '<div style="padding:24px;text-align:center;color:var(--label-secondary);font-size:14px;">Map failed to load — check your connection</div>';
+      return;
+    }
+    const L = window.L;
+    const map = L.map('map-canvas', {
+      zoomControl: true,
+      attributionControl: true
+    });
+    // Subtle, Flighty-ish tile style — CartoDB Voyager (clean, no API key needed)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap, © CARTO',
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    // Parse all map-rows from the list — single source of truth for coords
+    const bounds = [];
+    document.querySelectorAll('#map-list-view .map-row').forEach(row => {
+      const href = row.getAttribute('href') || '';
+      const m = href.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
+      if (!m) return;
+      const lat = parseFloat(m[1]);
+      const lng = parseFloat(m[2]);
+      const pinEl = row.querySelector('.pin');
+      let color = '#007aff';
+      if (pinEl) {
+        for (const cls of pinEl.classList) {
+          if (regionColors[cls]) { color = regionColors[cls]; break; }
+        }
+      }
+      const nameEl = row.querySelector('.title');
+      const name = nameEl ? nameEl.textContent.trim() : 'Location';
+      buildMarker(L, lat, lng, color, name, href).addTo(map);
+      bounds.push([lat, lng]);
+    });
+
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [30, 30] });
+    } else {
+      map.setView([35.3, 139.0], 9);
+    }
+    mapInstance = map;
+  }
+
+  function showList() {
+    segList.classList.add('active'); segList.setAttribute('aria-pressed', 'true');
+    segMap.classList.remove('active'); segMap.setAttribute('aria-pressed', 'false');
+    mapListView.classList.remove('hidden');
+    mapCanvasView.classList.remove('visible');
+  }
+  async function showMap() {
+    segMap.classList.add('active'); segMap.setAttribute('aria-pressed', 'true');
+    segList.classList.remove('active'); segList.setAttribute('aria-pressed', 'false');
+    mapListView.classList.add('hidden');
+    mapCanvasView.classList.add('visible');
+    if (!leafletLoaded) {
+      leafletLoaded = true;
+      await initMap();
+    } else if (mapInstance) {
+      // Map needs a size recalc when re-shown (it was hidden)
+      setTimeout(() => mapInstance.invalidateSize(), 50);
+    }
+  }
+  segList.addEventListener('click', showList);
+  segMap.addEventListener('click', showMap);
 </script>
 
 </body>
