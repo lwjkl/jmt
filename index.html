@@ -246,6 +246,47 @@
   }
   .segmented button:active { opacity: 0.6; }
 
+  /* Map focus chips — weather-driven days, lets you pick which prefecture */
+  .focus-chips {
+    display: none; /* shown by JS only when today is in a flex window */
+    margin: 0 16px 8px;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 0;
+    scrollbar-width: none;
+  }
+  .focus-chips.visible { display: flex; }
+  .focus-chips::-webkit-scrollbar { display: none; }
+  .focus-chips button {
+    background: var(--bg-grouped);
+    color: var(--label);
+    border: 0.5px solid var(--separator);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.08px;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .focus-chips button:active { opacity: 0.6; }
+  .focus-chips button.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+  .focus-chips .chip-divider {
+    width: 0.5px;
+    background: var(--separator);
+    flex-shrink: 0;
+    margin: 4px 2px;
+  }
+
   /* Map canvas — shown when toggle is on Map */
   #map-canvas-view {
     display: none;
@@ -472,6 +513,68 @@
     .scroll-top { background: rgba(28, 28, 30, 0.92); }
   }
 
+  /* Next Up pill — live countdown to the next time-sensitive event */
+  .next-up {
+    display: none; /* shown by JS only when an event is within ~72h */
+    margin: 0 16px 4px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--bg-grouped);
+    border: 0.5px solid var(--separator);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, transform 0.1s ease;
+    font-family: inherit;
+    width: calc(100% - 32px);
+    text-align: left;
+    color: inherit;
+  }
+  .next-up.visible { display: flex; }
+  .next-up:active { background: var(--gray-fill); transform: scale(0.995); }
+  .next-up .nu-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue); flex-shrink: 0;
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  /* Pulsing dot only when urgent (< 24h) */
+  .next-up.urgent .nu-dot {
+    background: var(--red);
+    animation: nu-pulse 2s ease-out infinite;
+  }
+  @keyframes nu-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
+    70%  { box-shadow: 0 0 0 8px rgba(255, 59, 48, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+  }
+  .next-up .nu-body { flex: 1; min-width: 0; }
+  .next-up .nu-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.4px; text-transform: uppercase;
+    color: var(--label-secondary);
+  }
+  .next-up.urgent .nu-label { color: var(--red); }
+  .next-up .nu-title {
+    font-size: 15px; font-weight: 600;
+    letter-spacing: -0.24px; color: var(--label);
+    margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .next-up .nu-count {
+    font-size: 17px; font-weight: 700;
+    color: var(--label); letter-spacing: -0.4px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+  .next-up.urgent .nu-count { color: var(--red); }
+  .next-up .nu-chevron {
+    color: var(--label-tertiary); font-size: 18px;
+    font-weight: 300; margin-left: 2px; flex-shrink: 0;
+  }
+
   .tab-content { display: none; animation: fadeIn 0.2s ease; }
   .tab-content.active { display: block; }
   @keyframes fadeIn {
@@ -526,19 +629,20 @@
 <!-- ============ ITINERARY TAB ============ -->
 <div class="tab-content active" id="tab-itinerary">
   <div class="hero">
-    <div class="eyebrow">Family Trip · 11 days</div>
+    <div class="eyebrow">Family Trip · 10 days</div>
     <h1>Japan</h1>
-    <div class="subtitle">May 23 – June 2, 2026</div>
+    <div class="subtitle">May 24 – June 2, 2026</div>
   </div>
 
-  <div class="day-card" data-start="2026-05-23" data-end="2026-05-23">
-    <div class="day-header">
-      <span class="day-date">May 23<span class="today-pill">Today</span></span>
-      <span class="day-day">Saturday</span>
-    </div>
-    <div class="day-title">Arrival</div>
-    <div class="day-summary">Wei Jie arrives Haneda 22:30 and overnights at the airport. Parents already settled in Shinjuku.</div>
-  </div>
+  <button type="button" class="next-up" id="next-up" aria-live="polite">
+    <span class="nu-dot" aria-hidden="true"></span>
+    <span class="nu-body">
+      <span class="nu-label" id="nu-label">Next up</span>
+      <span class="nu-title" id="nu-title"></span>
+    </span>
+    <span class="nu-count" id="nu-count"></span>
+    <span class="nu-chevron" aria-hidden="true">›</span>
+  </button>
 
   <div class="day-card" data-start="2026-05-24" data-end="2026-05-24">
     <div class="day-header">
@@ -719,6 +823,8 @@
     <div class="subtitle">All places grouped by region</div>
   </div>
 
+  <div class="focus-chips" id="focus-chips" role="tablist" aria-label="Focus map on prefecture"></div>
+
   <div id="map-canvas-view"><div id="map-canvas"></div></div>
 
   <div id="map-list-view">
@@ -733,7 +839,7 @@
       <div class="pin pin-gray">✈</div>
       <div class="body">
         <div class="title">Haneda Airport · Terminal 3</div>
-        <div class="detail">Arrival May 23 · Departure June 2</div>
+        <div class="detail">Departure June 2 · 23:30 flight to KLIA</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -763,7 +869,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-24" data-end="2026-05-24">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--pink)"></div>
       <div class="region-title">Atami</div>
@@ -788,7 +894,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-25" data-end="2026-05-28" data-group="Hakone">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--blue)"></div>
       <div class="region-title">Hakone</div>
@@ -837,7 +943,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-25" data-end="2026-05-28" data-group="Fuji">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--red)"></div>
       <div class="region-title">Fuji Five Lakes</div>
@@ -878,7 +984,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-25" data-end="2026-05-28" data-group="Izu South">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--orange)"></div>
       <div class="region-title">Izu South</div>
@@ -919,7 +1025,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-25" data-end="2026-05-28" data-group="Izu East">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--green)"></div>
       <div class="region-title">Izu East</div>
@@ -952,7 +1058,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-29" data-end="2026-05-29">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--teal)"></div>
       <div class="region-title">Manazuru</div>
@@ -969,7 +1075,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-30" data-end="2026-05-30">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--purple)"></div>
       <div class="region-title">Tokyo</div>
@@ -1002,7 +1108,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-05-31" data-end="2026-05-31">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--indigo)"></div>
       <div class="region-title">Yokohama</div>
@@ -1059,7 +1165,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-06-01" data-end="2026-06-01">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--pink)"></div>
       <div class="region-title">Kamakura + Enoshima</div>
@@ -1100,7 +1206,7 @@
     </a>
   </div>
 
-  <div class="region-card">
+  <div class="region-card" data-start="2026-06-02" data-end="2026-06-02">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--purple)"></div>
       <div class="region-title">Tokyo Central</div>
@@ -1233,22 +1339,22 @@
     <div class="row">
       <div class="icon bg-blue">✈</div>
       <div class="body">
-        <div class="title">Parents arrive</div>
-        <div class="detail">May 22 · KLIA 14:15 → Haneda 22:30</div>
+        <div class="title">Departure · NH886</div>
+        <div class="detail">May 22 · KUL 14:15 → HND 22:15</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-blue">✈</div>
       <div class="body">
-        <div class="title">Wei Jie arrives</div>
-        <div class="detail">May 23 · KLIA 14:15 → Haneda 22:30</div>
+        <div class="title">Departure · NH886</div>
+        <div class="detail">May 23 · KUL 14:15 → HND 22:15</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-red">✈</div>
       <div class="body">
-        <div class="title">Return together</div>
-        <div class="detail">June 2 · Haneda 23:30 → KLIA 06:00</div>
+        <div class="title">Return · NH885</div>
+        <div class="detail">Jun 2 · HND 23:30 → KUL 06:00<sup>+1</sup></div>
       </div>
     </div>
   </div>
@@ -1348,6 +1454,38 @@
 </nav>
 
 <script>
+  // ───────────────────────────────────────────────────────────────────
+  // Dev affordance: ?date=YYYY-MM-DD or ?date=YYYY-MM-DDTHH:MM overrides
+  // the current time, in JST. Lets us preview "Today" highlight, the
+  // Next Up countdown, and the Map auto-zoom for any trip day, without
+  // touching the system clock. No param = real time, production-safe.
+  // Examples:
+  //   ?date=2026-05-24            → noon JST on Day 1
+  //   ?date=2026-05-30T17:30      → 90 min before Adachi fireworks
+  //   ?date=2026-05-26            → mid flex window (chips visible)
+  // ───────────────────────────────────────────────────────────────────
+  const JST_OFFSET_MIN_TOP = 9 * 60;
+  const __dateOverrideParam = new URLSearchParams(window.location.search).get('date');
+  let __dateOverrideMs = null;
+  if (__dateOverrideParam) {
+    const m = __dateOverrideParam.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?$/);
+    if (m) {
+      const y  = +m[1], mo = +m[2] - 1, d = +m[3];
+      const hh = m[4] !== undefined ? +m[4] : 12;
+      const mm = m[5] !== undefined ? +m[5] : 0;
+      // The override is interpreted as JST wall-clock time
+      __dateOverrideMs = Date.UTC(y, mo, d, hh, mm) - JST_OFFSET_MIN_TOP * 60 * 1000;
+      // Visible breadcrumb so we don't forget we're in fake-time mode
+      console.log('[debug] date override:', __dateOverrideParam,
+        '→', new Date(__dateOverrideMs).toISOString());
+      document.documentElement.dataset.dateOverride = __dateOverrideParam;
+    } else {
+      console.warn('[debug] ignoring malformed ?date=', __dateOverrideParam);
+    }
+  }
+  function nowMs()   { return __dateOverrideMs !== null ? __dateOverrideMs : Date.now(); }
+  function nowDate() { return new Date(nowMs()); }
+
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.tab-content');
   tabs.forEach(tab => {
@@ -1419,7 +1557,7 @@
 
   // Today highlight + auto-scroll to today's card on first Itinerary visit
   function highlightToday() {
-    const now = new Date();
+    const now = nowDate();
     const today = now.getFullYear() + '-'
       + String(now.getMonth() + 1).padStart(2, '0') + '-'
       + String(now.getDate()).padStart(2, '0');
@@ -1457,6 +1595,103 @@
       itineraryScrolled = true;
     });
   }
+
+  // ───────────────────────────────────────────────────────────────────
+  // Next Up — live countdown to the next can't-miss event (in JST)
+  // ───────────────────────────────────────────────────────────────────
+  // Times are JST (UTC+9). Computed via UTC offset so the countdown is
+  // correct from any device timezone (Malaysia, Japan, anywhere).
+  // Each event maps to a day-card by `targetDate` for tap-to-scroll.
+  const JST_OFFSET_MIN = 9 * 60;
+  const events = [
+    { title: 'Meet at Odawara station',  date: '2026-05-24', time: '14:00', targetDate: '2026-05-24' },
+    { title: 'Atami Marine Fireworks',   date: '2026-05-24', time: '20:20', targetDate: '2026-05-24' },
+    { title: 'Return rental car',        date: '2026-05-29', time: '18:30', targetDate: '2026-05-29' },
+    { title: 'Adachi Fireworks',         date: '2026-05-30', time: '19:20', targetDate: '2026-05-30' },
+    { title: 'Flight NH885 to KUL',      date: '2026-06-02', time: '23:30', targetDate: '2026-06-02' }
+  ];
+
+  // Convert a JST date+time string to a real UTC Date object
+  function jstToDate(dateStr, timeStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm] = timeStr.split(':').map(Number);
+    // Compose the JST moment as UTC, then subtract the JST offset
+    return new Date(Date.UTC(y, m - 1, d, hh, mm) - JST_OFFSET_MIN * 60 * 1000);
+  }
+
+  // Precompute event timestamps once
+  events.forEach(e => { e.when = jstToDate(e.date, e.time); });
+
+  const nextUpEl = document.getElementById('next-up');
+  const nuTitle = document.getElementById('nu-title');
+  const nuLabel = document.getElementById('nu-label');
+  const nuCount = document.getElementById('nu-count');
+
+  // Format "in 2h 14m" / "in 47m" / "in 3d 5h" / "Starting now" / "Happening now"
+  function formatCountdown(ms) {
+    if (ms <= 0 && ms > -90 * 60 * 1000) return 'Now';   // within 90 min after start, still relevant
+    const totalMin = Math.floor(ms / 60000);
+    const days = Math.floor(totalMin / 1440);
+    const hours = Math.floor((totalMin % 1440) / 60);
+    const mins = totalMin % 60;
+    if (days >= 1) return days + 'd ' + hours + 'h';
+    if (hours >= 1) return hours + 'h ' + mins + 'm';
+    return mins + 'm';
+  }
+
+  function updateNextUp() {
+    const now = nowMs();
+    // Hide events that ended more than 90 min ago, then pick the soonest
+    const upcoming = events
+      .map(e => ({ ...e, msUntil: e.when.getTime() - now }))
+      .filter(e => e.msUntil > -90 * 60 * 1000)
+      .sort((a, b) => a.msUntil - b.msUntil);
+
+    if (upcoming.length === 0) {
+      nextUpEl.classList.remove('visible');
+      return;
+    }
+    const e = upcoming[0];
+    // Only surface within ~72h, to keep the page calm the rest of the time
+    const THREE_DAYS = 72 * 60 * 60 * 1000;
+    if (e.msUntil > THREE_DAYS) {
+      nextUpEl.classList.remove('visible');
+      return;
+    }
+
+    nuTitle.textContent = e.title;
+    nuCount.textContent = formatCountdown(e.msUntil);
+    nuLabel.textContent = e.msUntil <= 0 ? 'Happening now' : 'Next up';
+
+    const URGENT = 24 * 60 * 60 * 1000;
+    nextUpEl.classList.toggle('urgent', e.msUntil <= URGENT);
+    nextUpEl.classList.add('visible');
+    nextUpEl.dataset.target = e.targetDate;
+  }
+
+  // Tap → scroll to the matching day card
+  nextUpEl.addEventListener('click', () => {
+    const target = nextUpEl.dataset.target;
+    if (!target) return;
+    // Ensure we're on the Itinerary tab
+    const itinTab = document.getElementById('tab-itinerary');
+    if (!itinTab.classList.contains('active')) {
+      document.querySelector('.tab[data-tab="itinerary"]')?.click();
+    }
+    const card = document.querySelector('.day-card[data-start="' + target + '"]');
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const offset = window.scrollY + rect.top - 12;
+    window.scrollTo({ top: offset, behavior: 'smooth' });
+  });
+
+  updateNextUp();
+  // Refresh every 30s — cheap, and keeps the minute counter honest
+  setInterval(updateNextUp, 30 * 1000);
+  // Also refresh when the tab regains focus (phone unlocked after a while)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) updateNextUp();
+  });
   // On page load, Itinerary is the active tab by default
   scrollToTodayIfNeeded();
 
@@ -1510,6 +1745,12 @@
     return L.marker([lat, lng], { icon }).bindPopup(popupHtml);
   }
 
+  // Holds per-region pin coordinates so we can fit-to-region on demand.
+  // Populated during initMap from #map-list-view .region-card[data-start].
+  const regionPins = []; // [{ title, group, start, end, coords: [[lat,lng], …] }]
+  let allPinBounds = [];
+  let hasAutoZoomed = false; // only auto-zoom on first map open per session
+
   async function initMap() {
     if (mapInstance) return;
     try {
@@ -1530,33 +1771,130 @@
       subdomains: 'abcd'
     }).addTo(map);
 
-    // Parse all map-rows from the list — single source of truth for coords
-    const bounds = [];
-    document.querySelectorAll('#map-list-view .map-row').forEach(row => {
-      const href = row.getAttribute('href') || '';
-      const m = href.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
-      if (!m) return;
-      const lat = parseFloat(m[1]);
-      const lng = parseFloat(m[2]);
-      const pinEl = row.querySelector('.pin');
-      let color = '#007aff';
-      if (pinEl) {
-        for (const cls of pinEl.classList) {
-          if (regionColors[cls]) { color = regionColors[cls]; break; }
+    // Walk dated region-cards. Build markers + record per-region coords for focus.
+    document.querySelectorAll('#map-list-view .region-card').forEach(card => {
+      const start = card.dataset.start;
+      const end = card.dataset.end;
+      const title = card.querySelector('.region-title')?.textContent.trim() || '';
+      const group = card.dataset.group || title;
+      const coords = [];
+      card.querySelectorAll('.map-row').forEach(row => {
+        const href = row.getAttribute('href') || '';
+        const m = href.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
+        if (!m) return;
+        const lat = parseFloat(m[1]);
+        const lng = parseFloat(m[2]);
+        const pinEl = row.querySelector('.pin');
+        let color = '#007aff';
+        if (pinEl) {
+          for (const cls of pinEl.classList) {
+            if (regionColors[cls]) { color = regionColors[cls]; break; }
+          }
         }
+        const nameEl = row.querySelector('.title');
+        const name = nameEl ? nameEl.textContent.trim() : 'Location';
+        buildMarker(L, lat, lng, color, name, href).addTo(map);
+        coords.push([lat, lng]);
+        allPinBounds.push([lat, lng]);
+      });
+      // Only undated cards (Home Bases) are skipped from region-focus targeting
+      if (start && end && coords.length) {
+        regionPins.push({ title, group, start, end, coords });
       }
-      const nameEl = row.querySelector('.title');
-      const name = nameEl ? nameEl.textContent.trim() : 'Location';
-      buildMarker(L, lat, lng, color, name, href).addTo(map);
-      bounds.push([lat, lng]);
     });
 
-    if (bounds.length > 0) {
-      map.fitBounds(bounds, { padding: [30, 30] });
-    } else {
-      map.setView([35.3, 139.0], 9);
-    }
     mapInstance = map;
+  }
+
+  // Today as a JST yyyy-mm-dd string (so countdown + map use the same clock)
+  function todayJST() {
+    const now = nowDate();
+    // Shift "now" forward by JST's offset and read it as if it were UTC
+    const jstAsUTC = new Date(now.getTime() + JST_OFFSET_MIN * 60 * 1000);
+    return jstAsUTC.getUTCFullYear() + '-'
+      + String(jstAsUTC.getUTCMonth() + 1).padStart(2, '0') + '-'
+      + String(jstAsUTC.getUTCDate()).padStart(2, '0');
+  }
+
+  // Fit map to a set of coordinate arrays. If 1 pin → setView with sensible zoom.
+  function focusOn(coordsList) {
+    if (!mapInstance || !coordsList.length) return;
+    if (coordsList.length === 1) {
+      mapInstance.setView(coordsList[0], 13);
+    } else {
+      mapInstance.fitBounds(coordsList, { padding: [40, 40] });
+    }
+  }
+
+  // Build the chip row based on which regions match today (or empty = no chips).
+  // Chip click → focuses the map and marks itself active.
+  const focusChipsEl = document.getElementById('focus-chips');
+  function buildFocusChips(matches) {
+    focusChipsEl.innerHTML = '';
+    if (matches.length < 2) {
+      focusChipsEl.classList.remove('visible');
+      return;
+    }
+    // "All flex" chip → all matching regions combined
+    const all = document.createElement('button');
+    all.type = 'button';
+    all.textContent = 'All';
+    all.classList.add('active');
+    focusChipsEl.appendChild(all);
+    const chips = [all];
+    const allCoords = matches.flatMap(r => r.coords);
+    all.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      all.classList.add('active');
+      focusOn(allCoords);
+    });
+    // One chip per matching region
+    matches.forEach(r => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = r.group;
+      focusChipsEl.appendChild(b);
+      chips.push(b);
+      b.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        b.classList.add('active');
+        focusOn(r.coords);
+      });
+    });
+    // Divider + "All trip" escape hatch
+    const div = document.createElement('span');
+    div.className = 'chip-divider';
+    focusChipsEl.appendChild(div);
+    const allTrip = document.createElement('button');
+    allTrip.type = 'button';
+    allTrip.textContent = 'All trip';
+    focusChipsEl.appendChild(allTrip);
+    chips.push(allTrip);
+    allTrip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      allTrip.classList.add('active');
+      focusOn(allPinBounds);
+    });
+    focusChipsEl.classList.add('visible');
+  }
+
+  // Decide initial map framing based on today's date.
+  function autoFocusForToday() {
+    const today = todayJST();
+    const matches = regionPins.filter(r => today >= r.start && today <= r.end);
+    if (matches.length === 1) {
+      // Fixed day — zoom straight to it; no chips needed
+      focusOn(matches[0].coords);
+      focusChipsEl.classList.remove('visible');
+    } else if (matches.length > 1) {
+      // Flex window — chips visible, default "All" view of flex regions
+      buildFocusChips(matches);
+      focusOn(matches.flatMap(r => r.coords));
+    } else {
+      // Before / after the trip — fit everything
+      focusChipsEl.classList.remove('visible');
+      focusOn(allPinBounds);
+    }
   }
 
   function showList() {
@@ -1564,6 +1902,7 @@
     segMap.classList.remove('active'); segMap.setAttribute('aria-pressed', 'false');
     mapListView.classList.remove('hidden');
     mapCanvasView.classList.remove('visible');
+    focusChipsEl.classList.remove('visible');
   }
   async function showMap() {
     segMap.classList.add('active'); segMap.setAttribute('aria-pressed', 'true');
@@ -1573,9 +1912,26 @@
     if (!leafletLoaded) {
       leafletLoaded = true;
       await initMap();
+      // First time: auto-frame based on today's date
+      autoFocusForToday();
+      hasAutoZoomed = true;
     } else if (mapInstance) {
-      // Map needs a size recalc when re-shown (it was hidden)
+      // Map was already initialized — just refresh size; preserve user's pan/zoom
       setTimeout(() => mapInstance.invalidateSize(), 50);
+      // Restore the chips for today's flex window (they got hidden on showList)
+      if (!hasAutoZoomed) {
+        autoFocusForToday();
+        hasAutoZoomed = true;
+      } else {
+        // Re-show chips if still relevant for today (without re-zooming)
+        const today = todayJST();
+        const matches = regionPins.filter(r => today >= r.start && today <= r.end);
+        if (matches.length > 1) {
+          // Only build once; if already built, just toggle visible
+          if (!focusChipsEl.children.length) buildFocusChips(matches);
+          else focusChipsEl.classList.add('visible');
+        }
+      }
     }
   }
   segList.addEventListener('click', showList);
