@@ -330,6 +330,20 @@
     background: rgba(255,255,255,0.7) !important;
     font-size: 9px !important;
   }
+  /* Numbered map pins — coloured by region, number matches the list row.
+     The wrap class is on the divIcon container; we keep it empty so Leaflet's
+     default backgrounds don't paint anything we don't want. */
+  .map-pin-wrap { background: transparent !important; border: none !important; }
+  .map-pin {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font: 600 11px/1 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    letter-spacing: -0.2px;
+  }
   /* Today highlight — soft blue ring, no bouncy effects */
   .day-card.is-today {
     box-shadow: 0 0 0 2px var(--blue), 0 4px 16px rgba(0, 122, 255, 0.08);
@@ -1029,11 +1043,19 @@
     <div class="region-header">
       <div class="region-swatch" style="background: var(--green)"></div>
       <div class="region-title">Izu East</div>
-      <div class="region-count">3</div>
+      <div class="region-count">4</div>
     </div>
     <div class="region-desc">Easy day · ridge driving + coast</div>
-    <a class="map-row" href="https://maps.apple.com/?ll=34.9076446,139.0967583&q=Mount%20Omuro%20chairlift">
+    <a class="map-row" href="https://maps.apple.com/?ll=34.939437,139.1309937&q=Mount%20Komuro%20Ridge%20Walk%20Misora">
       <div class="pin pin-green">1</div>
+      <div class="body">
+        <div class="title">Mt. Komuro Ridge Walk "Misora"</div>
+        <div class="detail">Retro lift + 360° summit boardwalk</div>
+      </div>
+      <span class="chevron">›</span>
+    </a>
+    <a class="map-row" href="https://maps.apple.com/?ll=34.9076446,139.0967583&q=Mount%20Omuro%20chairlift">
+      <div class="pin pin-green">2</div>
       <div class="body">
         <div class="title">Mt. Omuro</div>
         <div class="detail">Chairlift to crater rim</div>
@@ -1041,7 +1063,7 @@
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.8910482,139.1399205&q=Jogasaki%20Coast">
-      <div class="pin pin-green">2</div>
+      <div class="pin pin-green">3</div>
       <div class="body">
         <div class="title">Jogasaki Coast</div>
         <div class="detail">Lava cliff coastline</div>
@@ -1049,7 +1071,7 @@
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.8905303,139.1387426&q=Kadowaki%20Suspension%20Bridge">
-      <div class="pin pin-green">3</div>
+      <div class="pin pin-green">4</div>
       <div class="body">
         <div class="title">Kadowaki Suspension Bridge</div>
         <div class="detail">Dramatic cliff bridge + lighthouse</div>
@@ -1729,20 +1751,25 @@
     });
   }
 
-  function buildMarker(L, lat, lng, color, name, href) {
-    const html = '<div style="width:18px;height:18px;border-radius:50%;background:' + color
-      + ';border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35);"></div>';
+  function buildMarker(L, lat, lng, color, name, href, number) {
+    // Numbered pin: small coloured circle with the row number inside.
+    // Number matches the order shown in the list view below the map,
+    // so the map and list speak the same language without any tapping.
+    const num = number != null ? String(number) : '';
+    const html = '<div class="map-pin" style="background:' + color + ';">'
+      + '<span>' + num + '</span></div>';
     const icon = L.divIcon({
       html: html,
-      className: '',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
-      popupAnchor: [0, -10]
+      className: 'map-pin-wrap',
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      popupAnchor: [0, -12]
     });
     const safeName = name.replace(/"/g, '&quot;');
     const popupHtml = '<div class="popup-name">' + safeName + '</div>'
       + '<a class="popup-link" href="' + href + '">Open in Apple Maps →</a>';
-    return L.marker([lat, lng], { icon }).bindPopup(popupHtml);
+    const marker = L.marker([lat, lng], { icon }).bindPopup(popupHtml);
+    return marker;
   }
 
   // Holds per-region pin coordinates so we can fit-to-region on demand.
@@ -1786,14 +1813,17 @@
         const lng = parseFloat(m[2]);
         const pinEl = row.querySelector('.pin');
         let color = '#007aff';
+        let number = null;
         if (pinEl) {
           for (const cls of pinEl.classList) {
             if (regionColors[cls]) { color = regionColors[cls]; break; }
           }
+          const numText = pinEl.textContent.trim();
+          if (/^\d+$/.test(numText)) number = parseInt(numText, 10);
         }
         const nameEl = row.querySelector('.title');
         const name = nameEl ? nameEl.textContent.trim() : 'Location';
-        buildMarker(L, lat, lng, color, name, href).addTo(map);
+        buildMarker(L, lat, lng, color, name, href, number).addTo(map);
         coords.push([lat, lng]);
         allPinBounds.push([lat, lng]);
       });
