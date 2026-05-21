@@ -194,6 +194,87 @@
     flex: 1;
     min-width: 0;
   }
+  /* Right-side toggle stack — holds language + (optional) view toggles */
+  .hero-toggles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Language toggle — refined pill, mirrors the segmented aesthetic.
+     Single tap flips EN ↔ 中. Active side is the *current* language. */
+  .lang-toggle {
+    display: inline-flex;
+    background: rgba(118, 118, 128, 0.16);
+    border-radius: 8px;
+    padding: 2px;
+    flex-shrink: 0;
+    position: relative;
+    letter-spacing: -0.06px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .lang-toggle { background: rgba(118, 118, 128, 0.32); }
+  }
+  .lang-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--label-secondary);
+    padding: 5px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, font-weight 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 26px;
+    min-width: 30px;
+    position: relative;
+    z-index: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .lang-toggle button.active {
+    background: #ffffff;
+    color: var(--label);
+    font-weight: 600;
+    box-shadow:
+      0 3px 8px rgba(0, 0, 0, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    .lang-toggle button.active {
+      background: #636366;
+      color: #ffffff;
+      box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        0 0 0 0.5px rgba(255, 255, 255, 0.04);
+    }
+  }
+  .lang-toggle button:active { opacity: 0.6; }
+  /* The 中 character benefits from a hair more breathing room */
+  .lang-toggle button[data-lang="zh"] {
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+
+  /* Whole-page language fade on switch — Apple-style "settled" transition.
+     Just barely perceptible, but takes the visual edge off the swap. */
+  body { transition: opacity 0.18s ease; }
+  body.lang-switching { opacity: 0.55; }
+
+  /* When in Chinese, tighten line-height a touch — CJK glyphs are denser */
+  html[lang="zh"] body {
+    font-feature-settings: "palt";
+  }
+  html[lang="zh"] .day-title,
+  html[lang="zh"] .region-title,
+  html[lang="zh"] .hero h1 {
+    letter-spacing: 0;
+  }
 
   /* Segmented control (List / Map toggle) — corner placement */
   .segmented {
@@ -644,16 +725,24 @@
 
 <!-- ============ ITINERARY TAB ============ -->
 <div class="tab-content active" id="tab-itinerary">
-  <div class="hero">
-    <div class="eyebrow">Family Trip · 10 days</div>
-    <h1>Japan</h1>
-    <div class="subtitle">May 24 – June 2, 2026</div>
+  <div class="hero hero-with-toggle">
+    <div class="eyebrow" data-i18n="hero.itin.eyebrow">Family Trip · 10 days</div>
+    <div class="hero-row">
+      <h1 data-i18n="hero.itin.title">Japan</h1>
+      <div class="hero-toggles">
+        <div class="lang-toggle" role="tablist" aria-label="Language">
+          <button type="button" data-lang="en" class="active" aria-pressed="true">EN</button>
+          <button type="button" data-lang="zh" aria-pressed="false">中</button>
+        </div>
+      </div>
+    </div>
+    <div class="subtitle" data-i18n="hero.itin.subtitle">May 24 – June 2, 2026</div>
   </div>
 
   <button type="button" class="next-up" id="next-up" aria-live="polite">
     <span class="nu-dot" aria-hidden="true"></span>
     <span class="nu-body">
-      <span class="nu-label" id="nu-label">Next up</span>
+      <span class="nu-label" id="nu-label" data-i18n="nextup.label">Next up</span>
       <span class="nu-title" id="nu-title"></span>
     </span>
     <span class="nu-count" id="nu-count"></span>
@@ -662,178 +751,184 @@
 
   <div class="day-card" data-start="2026-05-24" data-end="2026-05-24">
     <div class="day-header">
-      <span class="day-date">May 24<span class="today-pill">Today</span></span>
-      <span class="day-day">Sunday</span>
+      <span class="day-date">May 24<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.sun">Sunday</span>
     </div>
-    <div class="day-title">Atami Fireworks <span class="pill red">Event</span></div>
-    <div class="day-summary">Meet at Odawara, drop bags at Airbnb, then train to Atami for the museum and fireworks over the bay.</div>
+    <div class="day-title"><span data-i18n="d1.title">Atami Fireworks</span> <span class="pill red" data-i18n="pill.event">Event</span></div>
+    <div class="day-summary" data-i18n="d1.summary">Meet at Odawara, drop bags at Airbnb, then train to Atami for the museum and fireworks over the bay.</div>
     <ul class="stops">
-      <li>~14:00 — Meet at Odawara station</li>
-      <li>15:00 – 16:30 — MOA Museum of Art</li>
-      <li>17:00 – 19:00 — Atami town, dinner near Sun Beach</li>
-      <li><strong>20:20 – 20:40 — Atami Marine Fireworks</strong></li>
-      <li>~21:30 — Train back to Odawara</li>
+      <li data-i18n="d1.s1">~14:00 — Meet at Odawara station</li>
+      <li data-i18n="d1.s2">15:00 – 16:30 — MOA Museum of Art</li>
+      <li data-i18n="d1.s3">17:00 – 19:00 — Atami town, dinner near Sun Beach</li>
+      <li data-i18n-html="d1.s4"><strong>20:20 – 20:40 — Atami Marine Fireworks</strong></li>
+      <li data-i18n="d1.s5">~21:30 — Train back to Odawara</li>
     </ul>
-    <div class="note"><strong>Tip:</strong> Buy return train tickets before fireworks. Atami station gets packed — let the surge pass at a café for 30 min.</div>
+    <div class="note" data-i18n-html="d1.note"><strong>Tip:</strong> Buy return train tickets before fireworks. Atami station gets packed — let the surge pass at a café for 30 min.</div>
   </div>
 
   <div class="day-card" data-start="2026-05-25" data-end="2026-05-29">
     <div class="day-header">
-      <span class="day-date">May 25 – 29<span class="today-pill">Today</span></span>
-      <span class="day-day">Mon – Fri</span>
+      <span class="day-date">May 25 – 29<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.monfri">Mon – Fri</span>
     </div>
-    <div class="day-title">Weather-Driven Days <span class="pill purple">Flexible</span></div>
-    <div class="day-summary">Car pickup May 25 · 08:00. Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00. <strong>Return car May 29 by 18:30 sharp.</strong></div>
+    <div class="day-title"><span data-i18n="d2.title">Weather-Driven Days</span> <span class="pill purple" data-i18n="pill.flex">Flexible</span></div>
+    <div class="day-summary" data-i18n-html="d2.summary">Car pickup May 25 · 08:00. Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00. <strong>Return car May 29 by 18:30 sharp.</strong></div>
 
     <div class="bundle indigo">
-      <div class="bundle-title">⛩ Hakone Loop</div>
-      <div class="bundle-meta">Easy · 40 min from Odawara</div>
+      <div class="bundle-title" data-i18n="b.hakone.t">⛩ Hakone Loop</div>
+      <div class="bundle-meta" data-i18n="b.hakone.m">Easy · 40 min from Odawara</div>
       <ul>
-        <li>Hakone Shrine + Heiwa-no-Torii</li>
-        <li>Owakudani (volcanic vents, black eggs)</li>
-        <li>Old Tōkaidō Cedar Avenue</li>
-        <li>Hakone Ashinoko Observation Park</li>
-        <li>Hakone Gora Park (optional)</li>
+        <li data-i18n="b.hakone.1">Hakone Shrine + Heiwa-no-Torii</li>
+        <li data-i18n="b.hakone.2">Owakudani (volcanic vents, black eggs)</li>
+        <li data-i18n="b.hakone.3">Old Tōkaidō Cedar Avenue</li>
+        <li data-i18n="b.hakone.4">Hakone Ashinoko Observation Park</li>
+        <li data-i18n="b.hakone.5">Hakone Gora Park (optional)</li>
       </ul>
     </div>
 
     <div class="bundle blue">
-      <div class="bundle-title">☀ Fuji Five Lakes</div>
-      <div class="bundle-meta">Pick on a clear Fuji day · ~2hr from Odawara</div>
+      <div class="bundle-title" data-i18n="b.fuji.t">☀ Fuji Five Lakes</div>
+      <div class="bundle-meta" data-i18n="b.fuji.m">Pick on a clear Fuji day · ~2hr from Odawara</div>
       <ul>
-        <li>Arakurayama Sengen Park (Chureito Pagoda · 398 steps)</li>
-        <li>Kanadorii (gold torii)</li>
-        <li>Oshino Hakkai ponds</li>
-        <li>Lake Yamanaka panorama</li>
+        <li data-i18n="b.fuji.1">Arakurayama Sengen Park (Chureito Pagoda · 398 steps)</li>
+        <li data-i18n="b.fuji.2">Kanadorii (gold torii)</li>
+        <li data-i18n="b.fuji.3">Oshino Hakkai ponds</li>
+        <li data-i18n="b.fuji.4">Lake Yamanaka panorama</li>
       </ul>
     </div>
 
     <div class="bundle orange">
-      <div class="bundle-title">🌊 Izu — Hard Day</div>
-      <div class="bundle-meta">Depart 05:00 · long drive south</div>
+      <div class="bundle-title" data-i18n="b.izuh.t">🌊 Izu — Hard Day</div>
+      <div class="bundle-meta" data-i18n="b.izuh.m">Depart 05:00 · long drive south</div>
       <ul>
-        <li>Shimoda Park (Shiroyama)</li>
-        <li>Shirahama Beach (weather permitting)</li>
-        <li>Kawazu Seven Waterfalls</li>
-        <li>Joren Falls</li>
+        <li data-i18n="b.izuh.1">Shimoda Park (Shiroyama)</li>
+        <li data-i18n="b.izuh.2">Shirahama Beach (weather permitting)</li>
+        <li data-i18n="b.izuh.3">Kawazu Seven Waterfalls</li>
+        <li data-i18n="b.izuh.4">Joren Falls</li>
       </ul>
     </div>
 
     <div class="bundle green">
-      <div class="bundle-title">🏞 Izu — Easy Day</div>
-      <div class="bundle-meta">Scenic ridge driving</div>
+      <div class="bundle-title" data-i18n="b.izue.t">🏞 Izu — Easy Day</div>
+      <div class="bundle-meta" data-i18n="b.izue.m">Scenic ridge driving</div>
       <ul>
-        <li>Izu Skyline drive</li>
-        <li>Mt. Komuro Ridge Walk "Misora"</li>
-        <li>Mt. Omuro (chairlift to crater rim)</li>
-        <li>Jogasaki Coast + Kadowaki Suspension Bridge</li>
+        <li data-i18n="b.izue.1">Izu Skyline drive</li>
+        <li data-i18n="b.izue.2">Mt. Komuro Ridge Walk "Misora"</li>
+        <li data-i18n="b.izue.3">Mt. Omuro (chairlift to crater rim)</li>
+        <li data-i18n="b.izue.4">Jogasaki Coast + Kadowaki Suspension Bridge</li>
       </ul>
     </div>
 
     <div class="bundle teal">
-      <div class="bundle-title">🛍 Gotemba Premium Outlets</div>
-      <div class="bundle-meta">Rainy-day pick · ~40 min from Odawara · indoor backup</div>
+      <div class="bundle-title" data-i18n="b.gotemba.t">🛍 Gotemba Premium Outlets</div>
+      <div class="bundle-meta" data-i18n="b.gotemba.m">Rainy-day pick · ~40 min from Odawara · indoor backup</div>
       <ul>
-        <li>300+ outlet stores at the base of Mt. Fuji</li>
-        <li>Food court + restaurants for lunch</li>
-        <li>Ferris wheel + hot spring on site</li>
-        <li>Good fallback if forecast is wet (e.g. May 27)</li>
+        <li data-i18n="b.gotemba.1">300+ outlet stores at the base of Mt. Fuji</li>
+        <li data-i18n="b.gotemba.2">Food court + restaurants for lunch</li>
+        <li data-i18n="b.gotemba.3">Ferris wheel + hot spring on site</li>
+        <li data-i18n="b.gotemba.4">Good fallback if forecast is wet (e.g. May 27)</li>
       </ul>
     </div>
   </div>
 
   <div class="day-card" data-start="2026-05-30" data-end="2026-05-30">
     <div class="day-header">
-      <span class="day-date">May 30<span class="today-pill">Today</span></span>
-      <span class="day-day">Saturday</span>
+      <span class="day-date">May 30<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.sat">Saturday</span>
     </div>
-    <div class="day-title">Move to Tokyo · Adachi Fireworks <span class="pill red">Event</span></div>
-    <div class="day-summary">Early train from Odawara (~2hr) to drop luggage, then shopping around Tokyo Station / Shinjuku, Ueno in the afternoon, then Arakawa for fireworks.</div>
+    <div class="day-title"><span data-i18n="d3.title">Move to Tokyo · Adachi Fireworks</span> <span class="pill red" data-i18n="pill.event">Event</span></div>
+    <div class="day-summary" data-i18n="d3.summary">Early train from Odawara (~2hr) to drop luggage, then shopping around Tokyo Station / Shinjuku, Ueno in the afternoon, then Arakawa for fireworks.</div>
     <ul class="stops">
-      <li>Early morning — Pack out, train Odawara → Tokyo (~2hr)</li>
-      <li>Late morning — Drop luggage at Bay Hotel, Urayasu</li>
-      <li>Midday — Shopping · Tokyo Station or Shinjuku</li>
-      <li>Afternoon — Ueno (park, museums, Ameyoko)</li>
-      <li>~17:00 — Head to Arakawakosuge Park</li>
-      <li><strong>19:20 – 20:20 — Adachi Fireworks</strong></li>
+      <li data-i18n="d3.s1">Early morning — Pack out, train Odawara → Tokyo (~2hr)</li>
+      <li data-i18n="d3.s2">Late morning — Drop luggage at Bay Hotel, Urayasu</li>
+      <li data-i18n="d3.s3">Midday — Shopping · Tokyo Station or Shinjuku</li>
+      <li data-i18n="d3.s4">Afternoon — Ueno (park, museums, Ameyoko)</li>
+      <li data-i18n="d3.s5">~17:00 — Head to Arakawakosuge Park</li>
+      <li data-i18n-html="d3.s6"><strong>19:20 – 20:20 — Adachi Fireworks</strong></li>
     </ul>
-    <div class="note"><strong>Heads-up:</strong> 700K attendees. Arrive by 17:00 to find a spot. Exit via Machiya, Senju-Ohashi, or Adachi-Odai — not Kita-Senju.</div>
+    <div class="note" data-i18n-html="d3.note"><strong>Heads-up:</strong> 700K attendees. Arrive by 17:00 to find a spot. Exit via Machiya, Senju-Ohashi, or Adachi-Odai — not Kita-Senju.</div>
   </div>
 
   <div class="day-card" data-start="2026-05-31" data-end="2026-05-31">
     <div class="day-header">
-      <span class="day-date">May 31<span class="today-pill">Today</span></span>
-      <span class="day-day">Sunday</span>
+      <span class="day-date">May 31<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.sun">Sunday</span>
     </div>
-    <div class="day-title">Yokohama Day</div>
-    <div class="day-summary">Harbor walks, traditional garden, museum. End at Osanbashi Pier for the night skyline. More breathing room than Kamakura on a weekend.</div>
+    <div class="day-title" data-i18n="d4.title">Yokohama Day</div>
+    <div class="day-summary" data-i18n="d4.summary">Harbor walks, traditional garden, museum. End at Osanbashi Pier for the night skyline. More breathing room than Kamakura on a weekend.</div>
     <ul class="stops">
-      <li>Sankeien Garden</li>
-      <li>Future Rose Garden (Yamashita Park)</li>
-      <li>Red Brick Warehouse + harbor</li>
-      <li>Yokohama Port Museum</li>
-      <li>Yokohama Air Cabin (Sakuragicho ropeway)</li>
-      <li>Harbor View Park Observatory</li>
-      <li><strong>Osanbashi Pier — sunset & night view</strong></li>
+      <li data-i18n="d4.s1">Sankeien Garden</li>
+      <li data-i18n="d4.s2">Future Rose Garden (Yamashita Park)</li>
+      <li data-i18n="d4.s3">Red Brick Warehouse + harbor</li>
+      <li data-i18n="d4.s4">Yokohama Port Museum</li>
+      <li data-i18n="d4.s5">Yokohama Air Cabin (Sakuragicho ropeway)</li>
+      <li data-i18n="d4.s6">Harbor View Park Observatory</li>
+      <li data-i18n-html="d4.s7"><strong>Osanbashi Pier — sunset & night view</strong></li>
     </ul>
   </div>
 
   <div class="day-card" data-start="2026-06-01" data-end="2026-06-01">
     <div class="day-header">
-      <span class="day-date">June 1<span class="today-pill">Today</span></span>
-      <span class="day-day">Monday</span>
+      <span class="day-date">June 1<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.mon">Monday</span>
     </div>
-    <div class="day-title">Kamakura + Enoshima</div>
-    <div class="day-summary">Weekday = much quieter. Temples, shopping street, and seaside.</div>
+    <div class="day-title" data-i18n="d5.title">Kamakura + Enoshima</div>
+    <div class="day-summary" data-i18n="d5.summary">Weekday = much quieter. Temples, shopping street, and seaside.</div>
     <ul class="stops">
-      <li>Hase Temple</li>
-      <li>Komachi-dori Shopping Street</li>
-      <li>Meigetsu-in</li>
-      <li>Enoshima (sea breeze, sunset)</li>
+      <li data-i18n="d5.s1">Hase Temple</li>
+      <li data-i18n="d5.s2">Komachi-dori Shopping Street</li>
+      <li data-i18n="d5.s3">Meigetsu-in</li>
+      <li data-i18n="d5.s4">Enoshima (sea breeze, sunset)</li>
     </ul>
-    <div class="note"><strong>Pending:</strong> Tsurugaoka Hachimangu — add if time allows (sits at the end of Komachi-dori, ~5 min walk).</div>
+    <div class="note" data-i18n-html="d5.note"><strong>Pending:</strong> Tsurugaoka Hachimangu — add if time allows (sits at the end of Komachi-dori, ~5 min walk).</div>
   </div>
 
   <div class="day-card" data-start="2026-06-02" data-end="2026-06-02">
     <div class="day-header">
-      <span class="day-date">June 2<span class="today-pill">Today</span></span>
-      <span class="day-day">Tuesday</span>
+      <span class="day-date">June 2<span class="today-pill" data-i18n="today">Today</span></span>
+      <span class="day-day" data-i18n="day.tue">Tuesday</span>
     </div>
-    <div class="day-title">Departure</div>
-    <div class="day-summary">Half day for souvenirs and a city walk. Be at Haneda by 20:30 for 23:30 flight.</div>
+    <div class="day-title" data-i18n="d6.title">Departure</div>
+    <div class="day-summary" data-i18n="d6.summary">Half day for souvenirs and a city walk. Be at Haneda by 20:30 for 23:30 flight.</div>
     <ul class="stops">
-      <li>Morning — Souvenirs, light city walk</li>
-      <li>~17:00 — Pack and check out</li>
-      <li>~19:00 — Leave Urayasu for Haneda</li>
-      <li><strong>23:30 — Flight to KLIA</strong></li>
+      <li data-i18n="d6.s1">Morning — Souvenirs, light city walk</li>
+      <li data-i18n="d6.s2">~17:00 — Pack and check out</li>
+      <li data-i18n="d6.s3">~19:00 — Leave Urayasu for Haneda</li>
+      <li data-i18n-html="d6.s4"><strong>23:30 — Flight to KLIA</strong></li>
     </ul>
     <div class="bundle indigo">
-      <div class="bundle-title">🚶 Tokyo city walk picks</div>
-      <div class="bundle-meta">Choose any · all near central Tokyo</div>
+      <div class="bundle-title" data-i18n="b.tokyo.t">🚶 Tokyo city walk picks</div>
+      <div class="bundle-meta" data-i18n="b.tokyo.m">Choose any · all near central Tokyo</div>
       <ul>
-        <li>Tokyo Station Marunouchi Building (architecture)</li>
-        <li>Bank of Japan Head Office (Meiji-era façade)</li>
-        <li>Tsukiji Hongan-ji Temple (Indian-inspired)</li>
-        <li>The National Art Center, Tokyo (Roppongi)</li>
+        <li data-i18n="b.tokyo.1">Tokyo Station Marunouchi Building (architecture)</li>
+        <li data-i18n="b.tokyo.2">Bank of Japan Head Office (Meiji-era façade)</li>
+        <li data-i18n="b.tokyo.3">Tsukiji Hongan-ji Temple (Indian-inspired)</li>
+        <li data-i18n="b.tokyo.4">The National Art Center, Tokyo (Roppongi)</li>
       </ul>
     </div>
   </div>
 
-  <div class="footer">Plan subject to weather and group energy</div>
+  <div class="footer" data-i18n="footer.itin">Plan subject to weather and group energy</div>
 </div>
 
 <!-- ============ MAP TAB ============ -->
 <div class="tab-content" id="tab-map">
   <div class="hero hero-with-toggle">
-    <div class="eyebrow">Tap to open Apple Maps</div>
+    <div class="eyebrow" data-i18n="hero.map.eyebrow">Tap to open Apple Maps</div>
     <div class="hero-row">
-      <h1>Map</h1>
-      <div class="segmented" role="tablist">
-        <button type="button" id="seg-list" class="active" aria-pressed="true">List</button>
-        <button type="button" id="seg-map" aria-pressed="false">Map</button>
+      <h1 data-i18n="hero.map.title">Map</h1>
+      <div class="hero-toggles">
+        <div class="lang-toggle" role="tablist" aria-label="Language">
+          <button type="button" data-lang="en" class="active" aria-pressed="true">EN</button>
+          <button type="button" data-lang="zh" aria-pressed="false">中</button>
+        </div>
+        <div class="segmented" role="tablist">
+          <button type="button" id="seg-list" class="active" aria-pressed="true" data-i18n="map.list">List</button>
+          <button type="button" id="seg-map" aria-pressed="false" data-i18n="map.map">Map</button>
+        </div>
       </div>
     </div>
-    <div class="subtitle">All places grouped by region</div>
+    <div class="subtitle" data-i18n="hero.map.subtitle">All places grouped by region</div>
   </div>
 
   <div class="focus-chips" id="focus-chips" role="tablist" aria-label="Focus map on prefecture"></div>
@@ -844,22 +939,22 @@
   <div class="region-card">
     <div class="region-header">
       <div class="region-swatch" style="background: #8e8e93"></div>
-      <div class="region-title">Home Bases</div>
+      <div class="region-title" data-i18n="r.home.title">Home Bases</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">Where we stay, fly, and return the car</div>
+    <div class="region-desc" data-i18n="r.home.desc">Where we stay, fly, and return the car</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.5442587,139.7683199&q=Haneda%20Airport%20Terminal%203">
       <div class="pin pin-gray">✈</div>
       <div class="body">
-        <div class="title">Haneda Airport · Terminal 3</div>
-        <div class="detail">Departure June 2 · 23:30 flight to KLIA</div>
+        <div class="title" data-i18n="r.home.1t">Haneda Airport · Terminal 3</div>
+        <div class="detail" data-i18n="r.home.1d">Departure June 2 · 23:30 flight to KLIA</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.2564449,139.1553932&q=Odawara%20Station">
       <div class="pin pin-gray">🏡</div>
       <div class="body">
-        <div class="title">Odawara · Airbnb area</div>
+        <div class="title" data-i18n="r.home.2t">Odawara · Airbnb area</div>
         <div class="detail">May 24 – May 30</div>
       </div>
       <span class="chevron">›</span>
@@ -867,7 +962,7 @@
     <a class="map-row" href="https://maps.apple.com/?ll=35.6653379,139.8946616&q=Bay%20Hotel%20Urayasu-ekimae">
       <div class="pin pin-gray">🛏</div>
       <div class="body">
-        <div class="title">Bay Hotel Urayasu-ekimae</div>
+        <div class="title" data-i18n="r.home.3t">Bay Hotel Urayasu-ekimae</div>
         <div class="detail">May 30 – June 2</div>
       </div>
       <span class="chevron">›</span>
@@ -875,8 +970,8 @@
     <a class="map-row" href="https://maps.apple.com/?ll=35.2797787,139.1740584&q=Toyota%20Rent%20a%20Car%20Odawara%20Kamonomiya">
       <div class="pin pin-gray">🚗</div>
       <div class="body">
-        <div class="title">Toyota Rent a Car · Odawara Kamonomiya</div>
-        <div class="detail">Pickup May 25 · Return May 29 · 10 min walk from Kamonomiya Stn</div>
+        <div class="title" data-i18n="r.home.4t">Toyota Rent a Car · Odawara Kamonomiya</div>
+        <div class="detail" data-i18n="r.home.4d">Pickup May 25 · Return May 29 · 10 min walk from Kamonomiya Stn</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -885,23 +980,23 @@
   <div class="region-card" data-start="2026-05-24" data-end="2026-05-24">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--pink)"></div>
-      <div class="region-title">Atami</div>
+      <div class="region-title" data-i18n="r.atami.title">Atami</div>
       <div class="region-count">2</div>
     </div>
-    <div class="region-desc">May 24 · Museum and fireworks</div>
+    <div class="region-desc" data-i18n="r.atami.desc">May 24 · Museum and fireworks</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.1092776,139.0751998&q=MOA%20Museum%20of%20Art">
       <div class="pin pin-pink">1</div>
       <div class="body">
-        <div class="title">MOA Museum of Art</div>
-        <div class="detail">Hilltop · bay view at golden hour</div>
+        <div class="title" data-i18n="r.atami.1t">MOA Museum of Art</div>
+        <div class="detail" data-i18n="r.atami.1d">Hilltop · bay view at golden hour</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.098029,139.0767083&q=Atami%20Sun%20Beach">
       <div class="pin pin-pink">2</div>
       <div class="body">
-        <div class="title">Atami Sun Beach</div>
-        <div class="detail">Fireworks viewing · 20:20–20:40</div>
+        <div class="title" data-i18n="r.atami.2t">Atami Sun Beach</div>
+        <div class="detail" data-i18n="r.atami.2d">Fireworks viewing · 20:20–20:40</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -910,47 +1005,47 @@
   <div class="region-card" data-start="2026-05-25" data-end="2026-05-29" data-group="Hakone">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--blue)"></div>
-      <div class="region-title">Hakone</div>
+      <div class="region-title" data-i18n="r.hakone.title">Hakone</div>
       <div class="region-count">5</div>
     </div>
-    <div class="region-desc">May 25–29 · Easy loop day</div>
+    <div class="region-desc" data-i18n="r.hakone.desc">May 25–29 · Easy loop day</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.202783,139.0257419&q=Heiwa-no-Torii%20Hakone%20Shrine">
       <div class="pin pin-blue">1</div>
       <div class="body">
-        <div class="title">Heiwa-no-Torii (Hakone Shrine)</div>
-        <div class="detail">Iconic lake torii gate</div>
+        <div class="title" data-i18n="r.hakone.1t">Heiwa-no-Torii (Hakone Shrine)</div>
+        <div class="detail" data-i18n="r.hakone.1d">Iconic lake torii gate</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.2436011,139.0197304&q=Owakudani">
       <div class="pin pin-blue">2</div>
       <div class="body">
-        <div class="title">Owakudani</div>
-        <div class="detail">Volcanic vents · black eggs</div>
+        <div class="title" data-i18n="r.hakone.2t">Owakudani</div>
+        <div class="detail" data-i18n="r.hakone.2d">Volcanic vents · black eggs</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.198995,139.0297555&q=Old%20Tokaido%20Cedar%20Avenue">
       <div class="pin pin-blue">3</div>
       <div class="body">
-        <div class="title">Old Tōkaidō Cedar Avenue</div>
-        <div class="detail">400-year-old cedar walk</div>
+        <div class="title" data-i18n="r.hakone.3t">Old Tōkaidō Cedar Avenue</div>
+        <div class="detail" data-i18n="r.hakone.3d">400-year-old cedar walk</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.2388482,138.9784643&q=Hakone%20Ashinoko%20Observation%20Park">
       <div class="pin pin-blue">4</div>
       <div class="body">
-        <div class="title">Hakone Ashinoko Observation Park</div>
-        <div class="detail">Lake panorama + Fuji on clear days</div>
+        <div class="title" data-i18n="r.hakone.4t">Hakone Ashinoko Observation Park</div>
+        <div class="detail" data-i18n="r.hakone.4d">Lake panorama + Fuji on clear days</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.2486604,139.0451918&q=Hakone%20Gora%20Park">
       <div class="pin pin-blue">5</div>
       <div class="body">
-        <div class="title">Hakone Gora Park</div>
-        <div class="detail">Garden · optional stop</div>
+        <div class="title" data-i18n="r.hakone.5t">Hakone Gora Park</div>
+        <div class="detail" data-i18n="r.hakone.5d">Garden · optional stop</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -959,39 +1054,39 @@
   <div class="region-card" data-start="2026-05-25" data-end="2026-05-29" data-group="Fuji">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--red)"></div>
-      <div class="region-title">Fuji Five Lakes</div>
+      <div class="region-title" data-i18n="r.fuji.title">Fuji Five Lakes</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">Pick on a clear Fuji day · ~2hr from Odawara</div>
+    <div class="region-desc" data-i18n="r.fuji.desc">Pick on a clear Fuji day · ~2hr from Odawara</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.5012626,138.8013852&q=Arakurayama%20Sengen%20Park">
       <div class="pin pin-red">1</div>
       <div class="body">
-        <div class="title">Arakurayama Sengen Park</div>
-        <div class="detail">Chureito Pagoda · 398 steps</div>
+        <div class="title" data-i18n="r.fuji.1t">Arakurayama Sengen Park</div>
+        <div class="detail" data-i18n="r.fuji.1d">Chureito Pagoda · 398 steps</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4832338,138.797992&q=Kanadorii">
       <div class="pin pin-red">2</div>
       <div class="body">
-        <div class="title">Kanadorii</div>
-        <div class="detail">Gold torii framing Mt. Fuji</div>
+        <div class="title" data-i18n="r.fuji.2t">Kanadorii</div>
+        <div class="detail" data-i18n="r.fuji.2d">Gold torii framing Mt. Fuji</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4601656,138.8328364&q=Oshino%20Hakkai">
       <div class="pin pin-red">3</div>
       <div class="body">
-        <div class="title">Oshino Hakkai</div>
-        <div class="detail">Crystal-clear spring ponds</div>
+        <div class="title" data-i18n="r.fuji.3t">Oshino Hakkai</div>
+        <div class="detail" data-i18n="r.fuji.3d">Crystal-clear spring ponds</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4125913,138.9094189&q=Yamanakako%20Panorama-dai">
       <div class="pin pin-red">4</div>
       <div class="body">
-        <div class="title">Yamanakako Panorama-dai</div>
-        <div class="detail">Lake Yamanaka viewpoint</div>
+        <div class="title" data-i18n="r.fuji.4t">Yamanakako Panorama-dai</div>
+        <div class="detail" data-i18n="r.fuji.4d">Lake Yamanaka viewpoint</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1000,39 +1095,39 @@
   <div class="region-card" data-start="2026-05-25" data-end="2026-05-29" data-group="Izu South">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--orange)"></div>
-      <div class="region-title">Izu South</div>
+      <div class="region-title" data-i18n="r.izus.title">Izu South</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">Hard day · deepest south Izu</div>
+    <div class="region-desc" data-i18n="r.izus.desc">Hard day · deepest south Izu</div>
     <a class="map-row" href="https://maps.apple.com/?ll=34.6683097,138.9456637&q=Shimoda%20Park">
       <div class="pin pin-orange">1</div>
       <div class="body">
-        <div class="title">Shimoda Park (Shiroyama)</div>
-        <div class="detail">Hillside garden · hydrangeas</div>
+        <div class="title" data-i18n="r.izus.1t">Shimoda Park (Shiroyama)</div>
+        <div class="detail" data-i18n="r.izus.1d">Hillside garden · hydrangeas</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.6894666,138.9728404&q=Shirahama%20Beach%20Shimoda">
       <div class="pin pin-orange">2</div>
       <div class="body">
-        <div class="title">Shirahama Beach</div>
-        <div class="detail">White-sand beach (weather permitting)</div>
+        <div class="title" data-i18n="r.izus.2t">Shirahama Beach</div>
+        <div class="detail" data-i18n="r.izus.2d">White-sand beach (weather permitting)</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.7957781,138.933771&q=Kawazu%20Seven%20Waterfalls">
       <div class="pin pin-orange">3</div>
       <div class="body">
-        <div class="title">Kawazu Seven Waterfalls</div>
-        <div class="detail">Forest waterfall walk</div>
+        <div class="title" data-i18n="r.izus.3t">Kawazu Seven Waterfalls</div>
+        <div class="detail" data-i18n="r.izus.3d">Forest waterfall walk</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.8719344,138.922155&q=Joren%20Falls">
       <div class="pin pin-orange">4</div>
       <div class="body">
-        <div class="title">Joren Falls</div>
-        <div class="detail">Waterfall + wasabi farm</div>
+        <div class="title" data-i18n="r.izus.4t">Joren Falls</div>
+        <div class="detail" data-i18n="r.izus.4d">Waterfall + wasabi farm</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1041,39 +1136,39 @@
   <div class="region-card" data-start="2026-05-25" data-end="2026-05-29" data-group="Izu East">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--green)"></div>
-      <div class="region-title">Izu East</div>
+      <div class="region-title" data-i18n="r.izue.title">Izu East</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">Easy day · ridge driving + coast</div>
+    <div class="region-desc" data-i18n="r.izue.desc">Easy day · ridge driving + coast</div>
     <a class="map-row" href="https://maps.apple.com/?ll=34.939437,139.1309937&q=Mount%20Komuro%20Ridge%20Walk%20Misora">
       <div class="pin pin-green">1</div>
       <div class="body">
-        <div class="title">Mt. Komuro Ridge Walk "Misora"</div>
-        <div class="detail">Retro lift + 360° summit boardwalk</div>
+        <div class="title" data-i18n="r.izue.1t">Mt. Komuro Ridge Walk "Misora"</div>
+        <div class="detail" data-i18n="r.izue.1d">Retro lift + 360° summit boardwalk</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.9076446,139.0967583&q=Mount%20Omuro%20chairlift">
       <div class="pin pin-green">2</div>
       <div class="body">
-        <div class="title">Mt. Omuro</div>
-        <div class="detail">Chairlift to crater rim</div>
+        <div class="title" data-i18n="r.izue.2t">Mt. Omuro</div>
+        <div class="detail" data-i18n="r.izue.2d">Chairlift to crater rim</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.8910482,139.1399205&q=Jogasaki%20Coast">
       <div class="pin pin-green">3</div>
       <div class="body">
-        <div class="title">Jogasaki Coast</div>
-        <div class="detail">Lava cliff coastline</div>
+        <div class="title" data-i18n="r.izue.3t">Jogasaki Coast</div>
+        <div class="detail" data-i18n="r.izue.3d">Lava cliff coastline</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=34.8905303,139.1387426&q=Kadowaki%20Suspension%20Bridge">
       <div class="pin pin-green">4</div>
       <div class="body">
-        <div class="title">Kadowaki Suspension Bridge</div>
-        <div class="detail">Dramatic cliff bridge + lighthouse</div>
+        <div class="title" data-i18n="r.izue.4t">Kadowaki Suspension Bridge</div>
+        <div class="detail" data-i18n="r.izue.4d">Dramatic cliff bridge + lighthouse</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1082,15 +1177,15 @@
   <div class="region-card" data-start="2026-05-25" data-end="2026-05-29" data-group="Gotemba">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--teal)"></div>
-      <div class="region-title">Gotemba Premium Outlets</div>
+      <div class="region-title" data-i18n="r.gotemba.title">Gotemba Premium Outlets</div>
       <div class="region-count">1</div>
     </div>
-    <div class="region-desc">Rainy-day pick · indoor shopping near Mt. Fuji</div>
+    <div class="region-desc" data-i18n="r.gotemba.desc">Rainy-day pick · indoor shopping near Mt. Fuji</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.30698,138.96496&q=Gotemba%20Premium%20Outlets">
       <div class="pin pin-teal">1</div>
       <div class="body">
-        <div class="title">Gotemba Premium Outlets</div>
-        <div class="detail">300+ stores · food court · Fuji views</div>
+        <div class="title" data-i18n="r.gotemba.1t">Gotemba Premium Outlets</div>
+        <div class="detail" data-i18n="r.gotemba.1d">300+ stores · food court · Fuji views</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1099,31 +1194,31 @@
   <div class="region-card" data-start="2026-05-30" data-end="2026-05-30">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--purple)"></div>
-      <div class="region-title">Tokyo</div>
+      <div class="region-title" data-i18n="r.tokyo30.title">Tokyo</div>
       <div class="region-count">3</div>
     </div>
-    <div class="region-desc">May 30 · Move-in day + fireworks</div>
+    <div class="region-desc" data-i18n="r.tokyo30.desc">May 30 · Move-in day + fireworks</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.6810403,139.7638027&q=Tokyo%20Station">
       <div class="pin pin-purple">1</div>
       <div class="body">
-        <div class="title">Tokyo Station / Shinjuku</div>
-        <div class="detail">Midday shopping after luggage drop</div>
+        <div class="title" data-i18n="r.tokyo30.1t">Tokyo Station / Shinjuku</div>
+        <div class="detail" data-i18n="r.tokyo30.1d">Midday shopping after luggage drop</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.7156276,139.7745008&q=Ueno%20Park">
       <div class="pin pin-purple">2</div>
       <div class="body">
-        <div class="title">Ueno (Ueno Park)</div>
-        <div class="detail">Park, museums, Ameyoko · afternoon before fireworks</div>
+        <div class="title" data-i18n="r.tokyo30.2t">Ueno (Ueno Park)</div>
+        <div class="detail" data-i18n="r.tokyo30.2d">Park, museums, Ameyoko · afternoon before fireworks</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.7601032,139.7903535&q=Arakawakosuge%20Ryokuchi%20Park">
       <div class="pin pin-purple">3</div>
       <div class="body">
-        <div class="title">Arakawakosuge Park</div>
-        <div class="detail">Adachi Fireworks · 19:20–20:20</div>
+        <div class="title" data-i18n="r.tokyo30.3t">Arakawakosuge Park</div>
+        <div class="detail" data-i18n="r.tokyo30.3d">Adachi Fireworks · 19:20–20:20</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1132,55 +1227,55 @@
   <div class="region-card" data-start="2026-05-31" data-end="2026-05-31">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--indigo)"></div>
-      <div class="region-title">Yokohama</div>
+      <div class="region-title" data-i18n="r.yoko.title">Yokohama</div>
       <div class="region-count">6</div>
     </div>
-    <div class="region-desc">May 31 · Harbor, gardens, night skyline</div>
+    <div class="region-desc" data-i18n="r.yoko.desc">May 31 · Harbor, gardens, night skyline</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4170511,139.6588267&q=Sankeien%20Garden">
       <div class="pin pin-indigo">1</div>
       <div class="body">
-        <div class="title">Sankeien Garden</div>
-        <div class="detail">Traditional Japanese garden</div>
+        <div class="title" data-i18n="r.yoko.1t">Sankeien Garden</div>
+        <div class="detail" data-i18n="r.yoko.1d">Traditional Japanese garden</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.445443,139.650345&q=Future%20Rose%20Garden">
       <div class="pin pin-indigo">2</div>
       <div class="body">
-        <div class="title">Future Rose Garden</div>
-        <div class="detail">Yamashita Park · 160+ rose varieties</div>
+        <div class="title" data-i18n="r.yoko.2t">Future Rose Garden</div>
+        <div class="detail" data-i18n="r.yoko.2d">Yamashita Park · 160+ rose varieties</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4526321,139.6428944&q=Yokohama%20Red%20Brick%20Warehouse">
       <div class="pin pin-indigo">3</div>
       <div class="body">
-        <div class="title">Red Brick Warehouse</div>
-        <div class="detail">Historic harbor district</div>
+        <div class="title" data-i18n="r.yoko.3t">Red Brick Warehouse</div>
+        <div class="detail" data-i18n="r.yoko.3d">Historic harbor district</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4535539,139.6328378&q=Yokohama%20Port%20Museum">
       <div class="pin pin-indigo">4</div>
       <div class="body">
-        <div class="title">Yokohama Port Museum</div>
-        <div class="detail">Port history + Nippon Maru ship</div>
+        <div class="title" data-i18n="r.yoko.4t">Yokohama Port Museum</div>
+        <div class="detail" data-i18n="r.yoko.4d">Port history + Nippon Maru ship</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4514291,139.6314264&q=Yokohama%20Air%20Cabin">
       <div class="pin pin-indigo">5</div>
       <div class="body">
-        <div class="title">Yokohama Air Cabin</div>
-        <div class="detail">Sakuragicho ropeway · day or night</div>
+        <div class="title" data-i18n="r.yoko.5t">Yokohama Air Cabin</div>
+        <div class="detail" data-i18n="r.yoko.5d">Sakuragicho ropeway · day or night</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.4501659,139.6462458&q=Osanbashi%20Pier">
       <div class="pin pin-indigo">6</div>
       <div class="body">
-        <div class="title">Osanbashi Pier</div>
-        <div class="detail">Wooden deck · iconic night skyline</div>
+        <div class="title" data-i18n="r.yoko.6t">Osanbashi Pier</div>
+        <div class="detail" data-i18n="r.yoko.6d">Wooden deck · iconic night skyline</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1189,39 +1284,39 @@
   <div class="region-card" data-start="2026-06-01" data-end="2026-06-01">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--pink)"></div>
-      <div class="region-title">Kamakura + Enoshima</div>
+      <div class="region-title" data-i18n="r.kama.title">Kamakura + Enoshima</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">June 1 · Temples and seaside</div>
+    <div class="region-desc" data-i18n="r.kama.desc">June 1 · Temples and seaside</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.3124645,139.5330634&q=Hase%20Temple%20Kamakura">
       <div class="pin pin-pink">1</div>
       <div class="body">
-        <div class="title">Hase Temple (Hasedera)</div>
-        <div class="detail">Hillside temple · ocean view</div>
+        <div class="title" data-i18n="r.kama.1t">Hase Temple (Hasedera)</div>
+        <div class="detail" data-i18n="r.kama.1d">Hillside temple · ocean view</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.3197,139.5510&q=Komachi-dori%20Shopping%20Street">
       <div class="pin pin-pink">2</div>
       <div class="body">
-        <div class="title">Komachi-dori Shopping Street</div>
-        <div class="detail">~360m street · food, souvenirs, crafts</div>
+        <div class="title" data-i18n="r.kama.2t">Komachi-dori Shopping Street</div>
+        <div class="detail" data-i18n="r.kama.2d">~360m street · food, souvenirs, crafts</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.3348896,139.5515225&q=Meigetsu-in">
       <div class="pin pin-pink">3</div>
       <div class="body">
-        <div class="title">Meigetsu-in</div>
-        <div class="detail">Round window view · hydrangea temple</div>
+        <div class="title" data-i18n="r.kama.3t">Meigetsu-in</div>
+        <div class="detail" data-i18n="r.kama.3d">Round window view · hydrangea temple</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.2994178,139.480291&q=Enoshima">
       <div class="pin pin-pink">4</div>
       <div class="body">
-        <div class="title">Enoshima</div>
-        <div class="detail">Island · shrines · sunset spot</div>
+        <div class="title" data-i18n="r.kama.4t">Enoshima</div>
+        <div class="detail" data-i18n="r.kama.4d">Island · shrines · sunset spot</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1230,39 +1325,39 @@
   <div class="region-card" data-start="2026-06-02" data-end="2026-06-02">
     <div class="region-header">
       <div class="region-swatch" style="background: var(--purple)"></div>
-      <div class="region-title">Tokyo Central</div>
+      <div class="region-title" data-i18n="r.tokyoc.title">Tokyo Central</div>
       <div class="region-count">4</div>
     </div>
-    <div class="region-desc">June 2 · City walk picks · pick any</div>
+    <div class="region-desc" data-i18n="r.tokyoc.desc">June 2 · City walk picks · pick any</div>
     <a class="map-row" href="https://maps.apple.com/?ll=35.6810403,139.7638027&q=Marunouchi%20Building%20Tokyo%20Station">
       <div class="pin pin-purple">1</div>
       <div class="body">
-        <div class="title">Tokyo Station · Marunouchi Building</div>
-        <div class="detail">Architecture · shops · cafés</div>
+        <div class="title" data-i18n="r.tokyoc.1t">Tokyo Station · Marunouchi Building</div>
+        <div class="detail" data-i18n="r.tokyoc.1d">Architecture · shops · cafés</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.6867925,139.7712695&q=Bank%20of%20Japan%20Head%20Office">
       <div class="pin pin-purple">2</div>
       <div class="body">
-        <div class="title">Bank of Japan Head Office</div>
-        <div class="detail">Meiji-era façade · closed weekends</div>
+        <div class="title" data-i18n="r.tokyoc.2t">Bank of Japan Head Office</div>
+        <div class="detail" data-i18n="r.tokyoc.2d">Meiji-era façade · closed weekends</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.6664862,139.7722836&q=Tsukiji%20Hongan-ji%20Temple">
       <div class="pin pin-purple">3</div>
       <div class="body">
-        <div class="title">Tsukiji Hongan-ji Temple</div>
-        <div class="detail">Indian-inspired Buddhist architecture</div>
+        <div class="title" data-i18n="r.tokyoc.3t">Tsukiji Hongan-ji Temple</div>
+        <div class="detail" data-i18n="r.tokyoc.3d">Indian-inspired Buddhist architecture</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="map-row" href="https://maps.apple.com/?ll=35.665289,139.726374&q=The%20National%20Art%20Center%20Tokyo">
       <div class="pin pin-purple">4</div>
       <div class="body">
-        <div class="title">The National Art Center, Tokyo</div>
-        <div class="detail">Roppongi · closed Tuesdays — check first</div>
+        <div class="title" data-i18n="r.tokyoc.4t">The National Art Center, Tokyo</div>
+        <div class="detail" data-i18n="r.tokyoc.4d">Roppongi · closed Tuesdays — check first</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1270,78 +1365,86 @@
 
   </div><!-- /#map-list-view -->
 
-  <div class="footer">Tap any place to open in Apple Maps</div>
+  <div class="footer" data-i18n="footer.map">Tap any place to open in Apple Maps</div>
 </div>
 
 <!-- ============ ESSENTIALS TAB ============ -->
 <div class="tab-content" id="tab-essentials">
-  <div class="hero">
-    <div class="eyebrow">Quick Access</div>
-    <h1>Essentials</h1>
-    <div class="subtitle">Live info, key events, reminders</div>
+  <div class="hero hero-with-toggle">
+    <div class="eyebrow" data-i18n="hero.ess.eyebrow">Quick Access</div>
+    <div class="hero-row">
+      <h1 data-i18n="hero.ess.title">Essentials</h1>
+      <div class="hero-toggles">
+        <div class="lang-toggle" role="tablist" aria-label="Language">
+          <button type="button" data-lang="en" class="active" aria-pressed="true">EN</button>
+          <button type="button" data-lang="zh" aria-pressed="false">中</button>
+        </div>
+      </div>
+    </div>
+    <div class="subtitle" data-i18n="hero.ess.subtitle">Live info, key events, reminders</div>
   </div>
 
-  <div class="section-header">Emergency</div>
+  <div class="section-header" data-i18n="sec.emergency">Emergency</div>
   <div class="list">
     <a class="tel-row" href="tel:110">
       <div class="icon" style="background: var(--red)">🚨</div>
       <div class="body">
-        <div class="title">Police</div>
-        <div class="detail">Tap to call · 警察</div>
+        <div class="title" data-i18n="em.police">Police</div>
+        <div class="detail" data-i18n="em.police.d">Tap to call · 警察</div>
       </div>
       <div class="number">110</div>
     </a>
     <a class="tel-row" href="tel:119">
       <div class="icon" style="background: var(--orange)">🚑</div>
       <div class="body">
-        <div class="title">Ambulance / Fire</div>
-        <div class="detail">Tap to call · 救急・消防</div>
+        <div class="title" data-i18n="em.amb">Ambulance / Fire</div>
+        <div class="detail" data-i18n="em.amb.d">Tap to call · 救急・消防</div>
       </div>
       <div class="number">119</div>
     </a>
   </div>
 
-  <div class="section-header">Addresses · tap to copy</div>
+  <div class="section-header" data-i18n="sec.addresses">Addresses · tap to copy</div>
   <div class="list">
-    <button type="button" class="addr-row" data-copy="〒250-0032 神奈川県小田原市風祭9-1（最寄りバス停：東風祭）">
+    <button type="button" class="addr-row" data-copy="〒250-0032 神奈川県小田原市風祭9-1(最寄りバス停:東風祭)">
       <div class="icon bg-orange">🏡</div>
       <div class="body">
-        <div class="name">Odawara Airbnb · May 24 – 30</div>
-        <div class="jp">〒250-0032 神奈川県小田原市風祭9-1<br>最寄りバス停：東風祭</div>
-        <div class="en">9-1 Kazamatsuri, Odawara, Kanagawa 250-0032<br>Nearest bus stop: Higashi-Kazamatsuri</div>
-        <div class="copy-hint">Tap to copy</div>
+        <div class="name" data-i18n="ad.odawara">Odawara Airbnb · May 24 – 30</div>
+        <div class="jp">〒250-0032 神奈川県小田原市風祭9-1<br>最寄りバス停:東風祭</div>
+        <div class="en" data-i18n-html="ad.odawara.en">9-1 Kazamatsuri, Odawara, Kanagawa 250-0032<br>Nearest bus stop: Higashi-Kazamatsuri</div>
+        <div class="copy-hint" data-i18n="ad.tap">Tap to copy</div>
       </div>
     </button>
     <button type="button" class="addr-row" data-copy="ベイホテル浦安駅前　〒279-0002 千葉県浦安市北栄1-15-28">
       <div class="icon bg-indigo">🛏</div>
       <div class="body">
-        <div class="name">Bay Hotel Urayasu-ekimae · May 30 – June 2</div>
+        <div class="name" data-i18n="ad.bay">Bay Hotel Urayasu-ekimae · May 30 – June 2</div>
         <div class="jp">ベイホテル浦安駅前<br>〒279-0002 千葉県浦安市北栄1-15-28</div>
-        <div class="en">Bay Hotel Urayasu-ekimae<br>1-15-28 Kitazakae, Urayasu, Chiba 279-0002</div>
-        <div class="copy-hint">Tap to copy</div>
+        <div class="en" data-i18n-html="ad.bay.en">Bay Hotel Urayasu-ekimae<br>1-15-28 Kitazakae, Urayasu, Chiba 279-0002</div>
+        <div class="copy-hint" data-i18n="ad.tap">Tap to copy</div>
       </div>
     </button>
   </div>
 
-  <div class="section-header">Before Arrival</div>
+  <div class="section-header" data-i18n="sec.before">Before Arrival</div>
   <div class="list">
     <a class="link-row" href="https://www.vjw.digital.go.jp/main/#/vjwplo001" target="_blank" rel="noopener">
       <div class="icon bg-green">🛂</div>
       <div class="label-stack">
-        <div class="label-primary">Visit Japan Web</div>
-        <div class="label-secondary">Immigration + customs registration</div>
+        <div class="label-primary" data-i18n="vjw.t">Visit Japan Web</div>
+        <div class="label-secondary" data-i18n="vjw.d">Immigration + customs registration</div>
       </div>
       <span class="chevron">›</span>
     </a>
   </div>
 
-  <div class="section-header">Weather & Fuji</div>
+  <div class="section-header" data-i18n="sec.weather">Weather & Fuji</div>
   <div class="list">
     <a class="link-row" href="https://tenki.jp" target="_blank" rel="noopener">
       <div class="icon bg-blue">☁</div>
       <div class="label-stack">
         <div class="label-primary">tenki.jp</div>
-        <div class="label-secondary">Japan weather forecast</div>
+        <div class="label-secondary" data-i18n="tenki.d">Japan weather forecast</div>
       </div>
       <span class="chevron">›</span>
     </a>
@@ -1349,109 +1452,109 @@
       <div class="icon bg-red">🗻</div>
       <div class="label-stack">
         <div class="label-primary">fuji-san.info</div>
-        <div class="label-secondary">Mt. Fuji live cameras + visibility</div>
+        <div class="label-secondary" data-i18n="fuji.d">Mt. Fuji live cameras + visibility</div>
       </div>
       <span class="chevron">›</span>
     </a>
   </div>
 
-  <div class="section-header">Driving in Japan</div>
+  <div class="section-header" data-i18n="sec.drive">Driving in Japan</div>
   <div class="list">
     <a class="link-row" href="https://rent.toyota.co.jp/global_eng/drive/signs.html" target="_blank" rel="noopener">
       <div class="icon bg-red">🚸</div>
       <div class="label-stack">
-        <div class="label-primary">Traffic signs</div>
-        <div class="label-secondary">Regulatory, caution, direction & guide signs</div>
+        <div class="label-primary" data-i18n="dr.signs.t">Traffic signs</div>
+        <div class="label-secondary" data-i18n="dr.signs.d">Regulatory, caution, direction & guide signs</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="link-row" href="https://rent.toyota.co.jp/global_eng/drive/rules.html" target="_blank" rel="noopener">
       <div class="icon bg-orange">📖</div>
       <div class="label-stack">
-        <div class="label-primary">Traffic rules</div>
-        <div class="label-secondary">Drive on the left · speed limits · expressways</div>
+        <div class="label-primary" data-i18n="dr.rules.t">Traffic rules</div>
+        <div class="label-secondary" data-i18n="dr.rules.d">Drive on the left · speed limits · expressways</div>
       </div>
       <span class="chevron">›</span>
     </a>
     <a class="link-row" href="https://rent.toyota.co.jp/global_eng/drive/refueling.html" target="_blank" rel="noopener">
       <div class="icon bg-green">⛽</div>
       <div class="label-stack">
-        <div class="label-primary">Filling up the tank</div>
-        <div class="label-secondary">Self-serve gas stations · key phrases</div>
+        <div class="label-primary" data-i18n="dr.fuel.t">Filling up the tank</div>
+        <div class="label-secondary" data-i18n="dr.fuel.d">Self-serve gas stations · key phrases</div>
       </div>
       <span class="chevron">›</span>
     </a>
   </div>
 
-  <div class="section-header">Flights</div>
+  <div class="section-header" data-i18n="sec.flights">Flights</div>
   <div class="list">
     <div class="row">
       <div class="icon bg-blue">✈</div>
       <div class="body">
-        <div class="title">Departure · NH886</div>
+        <div class="title" data-i18n="fl.dep">Departure · NH886</div>
         <div class="detail">May 22 · KUL 14:15 → HND 22:15</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-blue">✈</div>
       <div class="body">
-        <div class="title">Departure · NH886</div>
+        <div class="title" data-i18n="fl.dep">Departure · NH886</div>
         <div class="detail">May 23 · KUL 14:15 → HND 22:15</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-red">✈</div>
       <div class="body">
-        <div class="title">Return · NH885</div>
+        <div class="title" data-i18n="fl.ret">Return · NH885</div>
         <div class="detail">Jun 2 · HND 23:30 → KUL 06:00<sup>+1</sup></div>
       </div>
     </div>
   </div>
 
-  <div class="section-header">Key events</div>
+  <div class="section-header" data-i18n="sec.events">Key events</div>
   <div class="list">
     <div class="row">
       <div class="icon bg-red">🎆</div>
       <div class="body">
-        <div class="title">Atami Marine Fireworks</div>
-        <div class="detail">May 24 (Sun) · 20:20–20:40 · Atami Bay</div>
+        <div class="title" data-i18n="ev.atami.t">Atami Marine Fireworks</div>
+        <div class="detail" data-i18n="ev.atami.d">May 24 (Sun) · 20:20–20:40 · Atami Bay</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-red">🎆</div>
       <div class="body">
-        <div class="title">Adachi Fireworks Festival</div>
-        <div class="detail">May 30 (Sat) · 19:20–20:20 · Arakawa River</div>
+        <div class="title" data-i18n="ev.adachi.t">Adachi Fireworks Festival</div>
+        <div class="detail" data-i18n="ev.adachi.d">May 30 (Sat) · 19:20–20:20 · Arakawa River</div>
       </div>
     </div>
   </div>
 
-  <div class="section-header">Reminders</div>
+  <div class="section-header" data-i18n="sec.rem">Reminders</div>
   <div class="list">
     <div class="row">
       <div class="icon bg-orange">!</div>
       <div class="body">
-        <div class="title">Car return deadline</div>
-        <div class="detail">May 29 · 18:30 sharp · late fees apply</div>
+        <div class="title" data-i18n="rem.car.t">Car return deadline</div>
+        <div class="detail" data-i18n="rem.car.d">May 29 · 18:30 sharp · late fees apply</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-blue">i</div>
       <div class="body">
-        <div class="title">Bay Hotel luggage drop</div>
-        <div class="detail">Drop bags before shopping & museum on May 30</div>
+        <div class="title" data-i18n="rem.bag.t">Bay Hotel luggage drop</div>
+        <div class="detail" data-i18n="rem.bag.d">Drop bags before shopping & museum on May 30</div>
       </div>
     </div>
     <div class="row">
       <div class="icon bg-orange">i</div>
       <div class="body">
-        <div class="title">Atami fireworks return</div>
-        <div class="detail">Buy return ticket BEFORE the show</div>
+        <div class="title" data-i18n="rem.fw.t">Atami fireworks return</div>
+        <div class="detail" data-i18n="rem.fw.d">Buy return ticket BEFORE the show</div>
       </div>
     </div>
   </div>
 
-  <!-- <div class="section-header">Quick reference</div>
+    <!-- <div class="section-header">Quick reference</div>
   <div class="list">
     <div class="row">
       <div class="icon bg-gray">¥</div>
@@ -1476,7 +1579,7 @@
     </div>
   </div> -->
 
-  <div class="footer">Save to Home Screen for quick access</div>
+  <div class="footer" data-i18n="footer.ess">Save to Home Screen for quick access</div>
 </div>
 
 <!-- ============ TAB BAR ============ -->
@@ -1490,19 +1593,559 @@
 <nav class="tabbar">
   <button class="tab active" data-tab="itinerary">
     <span class="glyph">≡</span>
-    Itinerary
+    <span data-i18n="tab.itin">Itinerary</span>
   </button>
   <button class="tab" data-tab="map">
     <span class="glyph">⊙</span>
-    Map
+    <span data-i18n="tab.map">Map</span>
   </button>
   <button class="tab" data-tab="essentials">
     <span class="glyph">✱</span>
-    Essentials
+    <span data-i18n="tab.ess">Essentials</span>
   </button>
 </nav>
 
 <script>
+  // ───────────────────────────────────────────────────────────────────
+  // i18n — English + Traditional Chinese, designed to feel as native
+  // in 中文 as in English. The toggle in each hero flips the whole page.
+  // Choice is remembered (localStorage) so it sticks across visits.
+  // Steve's rule: one tap, no settings menu, no confirmation dialog.
+  // ───────────────────────────────────────────────────────────────────
+  const I18N = {
+    en: {
+      // Headers
+      'hero.itin.eyebrow': 'Family Trip · 10 days',
+      'hero.itin.title': 'Japan',
+      'hero.itin.subtitle': 'May 24 – June 2, 2026',
+      'hero.map.eyebrow': 'Tap to open Apple Maps',
+      'hero.map.title': 'Map',
+      'hero.map.subtitle': 'All places grouped by region',
+      'hero.ess.eyebrow': 'Quick Access',
+      'hero.ess.title': 'Essentials',
+      'hero.ess.subtitle': 'Live info, key events, reminders',
+      // Common
+      'today': 'Today',
+      'nextup.label': 'Next up',
+      'nextup.now': 'Happening now',
+      'nextup.starting': 'Now',
+      'pill.event': 'Event',
+      'pill.flex': 'Flexible',
+      'map.list': 'List',
+      'map.map': 'Map',
+      'tab.itin': 'Itinerary',
+      'tab.map': 'Map',
+      'tab.ess': 'Essentials',
+      'footer.itin': 'Plan subject to weather and group energy',
+      'footer.map': 'Tap any place to open in Apple Maps',
+      'footer.ess': 'Save to Home Screen for quick access',
+      'chip.all': 'All',
+      'chip.alltrip': 'All trip',
+      'map.error': 'Map failed to load — check your connection',
+      // Days of week
+      'day.sun': 'Sunday', 'day.mon': 'Monday', 'day.tue': 'Tuesday',
+      'day.wed': 'Wednesday', 'day.thu': 'Thursday', 'day.fri': 'Friday',
+      'day.sat': 'Saturday', 'day.monfri': 'Mon – Fri',
+      // Day 1 — Atami
+      'd1.title': 'Atami Fireworks',
+      'd1.summary': 'Meet at Odawara, drop bags at Airbnb, then train to Atami for the museum and fireworks over the bay.',
+      'd1.s1': '~14:00 — Meet at Odawara station',
+      'd1.s2': '15:00 – 16:30 — MOA Museum of Art',
+      'd1.s3': '17:00 – 19:00 — Atami town, dinner near Sun Beach',
+      'd1.s4': '<strong>20:20 – 20:40 — Atami Marine Fireworks</strong>',
+      'd1.s5': '~21:30 — Train back to Odawara',
+      'd1.note': '<strong>Tip:</strong> Buy return train tickets before fireworks. Atami station gets packed — let the surge pass at a café for 30 min.',
+      // Day 2 — Flex
+      'd2.title': 'Weather-Driven Days',
+      'd2.summary': 'Car pickup May 25 · 08:00. Check Fuji visibility each morning, then pick the bundle. Wake 05:00, depart ~06:00, return ~19:00. <strong>Return car May 29 by 18:30 sharp.</strong>',
+      // Bundles
+      'b.hakone.t': '⛩ Hakone Loop',
+      'b.hakone.m': 'Easy · 40 min from Odawara',
+      'b.hakone.1': 'Hakone Shrine + Heiwa-no-Torii',
+      'b.hakone.2': 'Owakudani (volcanic vents, black eggs)',
+      'b.hakone.3': 'Old Tōkaidō Cedar Avenue',
+      'b.hakone.4': 'Hakone Ashinoko Observation Park',
+      'b.hakone.5': 'Hakone Gora Park (optional)',
+      'b.fuji.t': '☀ Fuji Five Lakes',
+      'b.fuji.m': 'Pick on a clear Fuji day · ~2hr from Odawara',
+      'b.fuji.1': 'Arakurayama Sengen Park (Chureito Pagoda · 398 steps)',
+      'b.fuji.2': 'Kanadorii (gold torii)',
+      'b.fuji.3': 'Oshino Hakkai ponds',
+      'b.fuji.4': 'Lake Yamanaka panorama',
+      'b.izuh.t': '🌊 Izu — Hard Day',
+      'b.izuh.m': 'Depart 05:00 · long drive south',
+      'b.izuh.1': 'Shimoda Park (Shiroyama)',
+      'b.izuh.2': 'Shirahama Beach (weather permitting)',
+      'b.izuh.3': 'Kawazu Seven Waterfalls',
+      'b.izuh.4': 'Joren Falls',
+      'b.izue.t': '🏞 Izu — Easy Day',
+      'b.izue.m': 'Scenic ridge driving',
+      'b.izue.1': 'Izu Skyline drive',
+      'b.izue.2': 'Mt. Komuro Ridge Walk "Misora"',
+      'b.izue.3': 'Mt. Omuro (chairlift to crater rim)',
+      'b.izue.4': 'Jogasaki Coast + Kadowaki Suspension Bridge',
+      'b.gotemba.t': '🛍 Gotemba Premium Outlets',
+      'b.gotemba.m': 'Rainy-day pick · ~40 min from Odawara · indoor backup',
+      'b.gotemba.1': '300+ outlet stores at the base of Mt. Fuji',
+      'b.gotemba.2': 'Food court + restaurants for lunch',
+      'b.gotemba.3': 'Ferris wheel + hot spring on site',
+      'b.gotemba.4': 'Good fallback if forecast is wet (e.g. May 27)',
+      // Day 3 — Adachi
+      'd3.title': 'Move to Tokyo · Adachi Fireworks',
+      'd3.summary': 'Early train from Odawara (~2hr) to drop luggage, then shopping around Tokyo Station / Shinjuku, Ueno in the afternoon, then Arakawa for fireworks.',
+      'd3.s1': 'Early morning — Pack out, train Odawara → Tokyo (~2hr)',
+      'd3.s2': 'Late morning — Drop luggage at Bay Hotel, Urayasu',
+      'd3.s3': 'Midday — Shopping · Tokyo Station or Shinjuku',
+      'd3.s4': 'Afternoon — Ueno (park, museums, Ameyoko)',
+      'd3.s5': '~17:00 — Head to Arakawakosuge Park',
+      'd3.s6': '<strong>19:20 – 20:20 — Adachi Fireworks</strong>',
+      'd3.note': '<strong>Heads-up:</strong> 700K attendees. Arrive by 17:00 to find a spot. Exit via Machiya, Senju-Ohashi, or Adachi-Odai — not Kita-Senju.',
+      // Day 4 — Yokohama
+      'd4.title': 'Yokohama Day',
+      'd4.summary': 'Harbor walks, traditional garden, museum. End at Osanbashi Pier for the night skyline. More breathing room than Kamakura on a weekend.',
+      'd4.s1': 'Sankeien Garden',
+      'd4.s2': 'Future Rose Garden (Yamashita Park)',
+      'd4.s3': 'Red Brick Warehouse + harbor',
+      'd4.s4': 'Yokohama Port Museum',
+      'd4.s5': 'Yokohama Air Cabin (Sakuragicho ropeway)',
+      'd4.s6': 'Harbor View Park Observatory',
+      'd4.s7': '<strong>Osanbashi Pier — sunset & night view</strong>',
+      // Day 5 — Kamakura
+      'd5.title': 'Kamakura + Enoshima',
+      'd5.summary': 'Weekday = much quieter. Temples, shopping street, and seaside.',
+      'd5.s1': 'Hase Temple',
+      'd5.s2': 'Komachi-dori Shopping Street',
+      'd5.s3': 'Meigetsu-in',
+      'd5.s4': 'Enoshima (sea breeze, sunset)',
+      'd5.note': '<strong>Pending:</strong> Tsurugaoka Hachimangu — add if time allows (sits at the end of Komachi-dori, ~5 min walk).',
+      // Day 6 — Departure
+      'd6.title': 'Departure',
+      'd6.summary': 'Half day for souvenirs and a city walk. Be at Haneda by 20:30 for 23:30 flight.',
+      'd6.s1': 'Morning — Souvenirs, light city walk',
+      'd6.s2': '~17:00 — Pack and check out',
+      'd6.s3': '~19:00 — Leave Urayasu for Haneda',
+      'd6.s4': '<strong>23:30 — Flight to KLIA</strong>',
+      'b.tokyo.t': '🚶 Tokyo city walk picks',
+      'b.tokyo.m': 'Choose any · all near central Tokyo',
+      'b.tokyo.1': 'Tokyo Station Marunouchi Building (architecture)',
+      'b.tokyo.2': 'Bank of Japan Head Office (Meiji-era façade)',
+      'b.tokyo.3': 'Tsukiji Hongan-ji Temple (Indian-inspired)',
+      'b.tokyo.4': 'The National Art Center, Tokyo (Roppongi)',
+      // Map regions
+      'r.home.title': 'Home Bases',
+      'r.home.desc': 'Where we stay, fly, and return the car',
+      'r.home.1t': 'Haneda Airport · Terminal 3',
+      'r.home.1d': 'Departure June 2 · 23:30 flight to KLIA',
+      'r.home.2t': 'Odawara · Airbnb area',
+      'r.home.3t': 'Bay Hotel Urayasu-ekimae',
+      'r.home.4t': 'Toyota Rent a Car · Odawara Kamonomiya',
+      'r.home.4d': 'Pickup May 25 · Return May 29 · 10 min walk from Kamonomiya Stn',
+      'r.atami.title': 'Atami',
+      'r.atami.desc': 'May 24 · Museum and fireworks',
+      'r.atami.1t': 'MOA Museum of Art', 'r.atami.1d': 'Hilltop · bay view at golden hour',
+      'r.atami.2t': 'Atami Sun Beach', 'r.atami.2d': 'Fireworks viewing · 20:20–20:40',
+      'r.hakone.title': 'Hakone', 'r.hakone.desc': 'May 25–29 · Easy loop day',
+      'r.hakone.1t': 'Heiwa-no-Torii (Hakone Shrine)', 'r.hakone.1d': 'Iconic lake torii gate',
+      'r.hakone.2t': 'Owakudani', 'r.hakone.2d': 'Volcanic vents · black eggs',
+      'r.hakone.3t': 'Old Tōkaidō Cedar Avenue', 'r.hakone.3d': '400-year-old cedar walk',
+      'r.hakone.4t': 'Hakone Ashinoko Observation Park', 'r.hakone.4d': 'Lake panorama + Fuji on clear days',
+      'r.hakone.5t': 'Hakone Gora Park', 'r.hakone.5d': 'Garden · optional stop',
+      'r.fuji.title': 'Fuji Five Lakes', 'r.fuji.desc': 'Pick on a clear Fuji day · ~2hr from Odawara',
+      'r.fuji.1t': 'Arakurayama Sengen Park', 'r.fuji.1d': 'Chureito Pagoda · 398 steps',
+      'r.fuji.2t': 'Kanadorii', 'r.fuji.2d': 'Gold torii framing Mt. Fuji',
+      'r.fuji.3t': 'Oshino Hakkai', 'r.fuji.3d': 'Crystal-clear spring ponds',
+      'r.fuji.4t': 'Yamanakako Panorama-dai', 'r.fuji.4d': 'Lake Yamanaka viewpoint',
+      'r.izus.title': 'Izu South', 'r.izus.desc': 'Hard day · deepest south Izu',
+      'r.izus.1t': 'Shimoda Park (Shiroyama)', 'r.izus.1d': 'Hillside garden · hydrangeas',
+      'r.izus.2t': 'Shirahama Beach', 'r.izus.2d': 'White-sand beach (weather permitting)',
+      'r.izus.3t': 'Kawazu Seven Waterfalls', 'r.izus.3d': 'Forest waterfall walk',
+      'r.izus.4t': 'Joren Falls', 'r.izus.4d': 'Waterfall + wasabi farm',
+      'r.izue.title': 'Izu East', 'r.izue.desc': 'Easy day · ridge driving + coast',
+      'r.izue.1t': 'Mt. Komuro Ridge Walk "Misora"', 'r.izue.1d': 'Retro lift + 360° summit boardwalk',
+      'r.izue.2t': 'Mt. Omuro', 'r.izue.2d': 'Chairlift to crater rim',
+      'r.izue.3t': 'Jogasaki Coast', 'r.izue.3d': 'Lava cliff coastline',
+      'r.izue.4t': 'Kadowaki Suspension Bridge', 'r.izue.4d': 'Dramatic cliff bridge + lighthouse',
+      'r.gotemba.title': 'Gotemba Premium Outlets', 'r.gotemba.desc': 'Rainy-day pick · indoor shopping near Mt. Fuji',
+      'r.gotemba.1t': 'Gotemba Premium Outlets', 'r.gotemba.1d': '300+ stores · food court · Fuji views',
+      'r.tokyo30.title': 'Tokyo', 'r.tokyo30.desc': 'May 30 · Move-in day + fireworks',
+      'r.tokyo30.1t': 'Tokyo Station / Shinjuku', 'r.tokyo30.1d': 'Midday shopping after luggage drop',
+      'r.tokyo30.2t': 'Ueno (Ueno Park)', 'r.tokyo30.2d': 'Park, museums, Ameyoko · afternoon before fireworks',
+      'r.tokyo30.3t': 'Arakawakosuge Park', 'r.tokyo30.3d': 'Adachi Fireworks · 19:20–20:20',
+      'r.yoko.title': 'Yokohama', 'r.yoko.desc': 'May 31 · Harbor, gardens, night skyline',
+      'r.yoko.1t': 'Sankeien Garden', 'r.yoko.1d': 'Traditional Japanese garden',
+      'r.yoko.2t': 'Future Rose Garden', 'r.yoko.2d': 'Yamashita Park · 160+ rose varieties',
+      'r.yoko.3t': 'Red Brick Warehouse', 'r.yoko.3d': 'Historic harbor district',
+      'r.yoko.4t': 'Yokohama Port Museum', 'r.yoko.4d': 'Port history + Nippon Maru ship',
+      'r.yoko.5t': 'Yokohama Air Cabin', 'r.yoko.5d': 'Sakuragicho ropeway · day or night',
+      'r.yoko.6t': 'Osanbashi Pier', 'r.yoko.6d': 'Wooden deck · iconic night skyline',
+      'r.kama.title': 'Kamakura + Enoshima', 'r.kama.desc': 'June 1 · Temples and seaside',
+      'r.kama.1t': 'Hase Temple (Hasedera)', 'r.kama.1d': 'Hillside temple · ocean view',
+      'r.kama.2t': 'Komachi-dori Shopping Street', 'r.kama.2d': '~360m street · food, souvenirs, crafts',
+      'r.kama.3t': 'Meigetsu-in', 'r.kama.3d': 'Round window view · hydrangea temple',
+      'r.kama.4t': 'Enoshima', 'r.kama.4d': 'Island · shrines · sunset spot',
+      'r.tokyoc.title': 'Tokyo Central', 'r.tokyoc.desc': 'June 2 · City walk picks · pick any',
+      'r.tokyoc.1t': 'Tokyo Station · Marunouchi Building', 'r.tokyoc.1d': 'Architecture · shops · cafés',
+      'r.tokyoc.2t': 'Bank of Japan Head Office', 'r.tokyoc.2d': 'Meiji-era façade · closed weekends',
+      'r.tokyoc.3t': 'Tsukiji Hongan-ji Temple', 'r.tokyoc.3d': 'Indian-inspired Buddhist architecture',
+      'r.tokyoc.4t': 'The National Art Center, Tokyo', 'r.tokyoc.4d': 'Roppongi · closed Tuesdays — check first',
+      // Essentials
+      'sec.emergency': 'Emergency',
+      'em.police': 'Police', 'em.police.d': 'Tap to call · 警察',
+      'em.amb': 'Ambulance / Fire', 'em.amb.d': 'Tap to call · 救急・消防',
+      'sec.addresses': 'Addresses · tap to copy',
+      'ad.odawara': 'Odawara Airbnb · May 24 – 30',
+      'ad.odawara.en': '9-1 Kazamatsuri, Odawara, Kanagawa 250-0032<br>Nearest bus stop: Higashi-Kazamatsuri',
+      'ad.bay': 'Bay Hotel Urayasu-ekimae · May 30 – June 2',
+      'ad.bay.en': 'Bay Hotel Urayasu-ekimae<br>1-15-28 Kitazakae, Urayasu, Chiba 279-0002',
+      'ad.tap': 'Tap to copy',
+      'ad.copied': 'Copied',
+      'sec.before': 'Before Arrival',
+      'vjw.t': 'Visit Japan Web', 'vjw.d': 'Immigration + customs registration',
+      'sec.weather': 'Weather & Fuji',
+      'tenki.d': 'Japan weather forecast',
+      'fuji.d': 'Mt. Fuji live cameras + visibility',
+      'sec.drive': 'Driving in Japan',
+      'dr.signs.t': 'Traffic signs', 'dr.signs.d': 'Regulatory, caution, direction & guide signs',
+      'dr.rules.t': 'Traffic rules', 'dr.rules.d': 'Drive on the left · speed limits · expressways',
+      'dr.fuel.t': 'Filling up the tank', 'dr.fuel.d': 'Self-serve gas stations · key phrases',
+      'sec.flights': 'Flights',
+      'fl.dep': 'Departure · NH886', 'fl.ret': 'Return · NH885',
+      'sec.events': 'Key events',
+      'ev.atami.t': 'Atami Marine Fireworks', 'ev.atami.d': 'May 24 (Sun) · 20:20–20:40 · Atami Bay',
+      'ev.adachi.t': 'Adachi Fireworks Festival', 'ev.adachi.d': 'May 30 (Sat) · 19:20–20:20 · Arakawa River',
+      // Next Up countdown event titles (shorter than the Essentials list versions above)
+      'ev.meet': 'Meet at Odawara station',
+      'ev.atami': 'Atami Marine Fireworks',
+      'ev.return': 'Return rental car',
+      'ev.adachi': 'Adachi Fireworks',
+      'ev.flight': 'Flight NH885 to KUL',
+      // Map popup
+      'popup.open': 'Open in Apple Maps →',
+      'sec.rem': 'Reminders',
+      'rem.car.t': 'Car return deadline', 'rem.car.d': 'May 29 · 18:30 sharp · late fees apply',
+      'rem.bag.t': 'Bay Hotel luggage drop', 'rem.bag.d': 'Drop bags before shopping & museum on May 30',
+      'rem.fw.t': 'Atami fireworks return', 'rem.fw.d': 'Buy return ticket BEFORE the show'
+    },
+    zh: {
+      // Headers
+      'hero.itin.eyebrow': '家庭旅行 · 10 天',
+      'hero.itin.title': '日本',
+      'hero.itin.subtitle': '2026年5月24日 – 6月2日',
+      'hero.map.eyebrow': '輕觸開啟蘋果地圖',
+      'hero.map.title': '地圖',
+      'hero.map.subtitle': '依地區分組的所有景點',
+      'hero.ess.eyebrow': '快速查閱',
+      'hero.ess.title': '重要資訊',
+      'hero.ess.subtitle': '即時資訊、重點活動、提醒事項',
+      // Common
+      'today': '今天',
+      'nextup.label': '接下來',
+      'nextup.now': '正在進行',
+      'nextup.starting': '即將開始',
+      'pill.event': '活動',
+      'pill.flex': '機動',
+      'map.list': '清單',
+      'map.map': '地圖',
+      'tab.itin': '行程',
+      'tab.map': '地圖',
+      'tab.ess': '資訊',
+      'footer.itin': '行程依天氣與大家的精神狀況調整',
+      'footer.map': '輕觸任一地點以開啟蘋果地圖',
+      'footer.ess': '加入主畫面以便快速取用',
+      'chip.all': '全部',
+      'chip.alltrip': '整趟旅程',
+      'map.error': '地圖載入失敗 — 請檢查網路連線',
+      // Days
+      'day.sun': '星期日', 'day.mon': '星期一', 'day.tue': '星期二',
+      'day.wed': '星期三', 'day.thu': '星期四', 'day.fri': '星期五',
+      'day.sat': '星期六', 'day.monfri': '週一至週五',
+      // Day 1
+      'd1.title': '熱海煙火',
+      'd1.summary': '在小田原集合,到民宿放行李,再搭電車到熱海參觀美術館,並觀賞海灣上的煙火。',
+      'd1.s1': '約 14:00 — 在小田原站集合',
+      'd1.s2': '15:00 – 16:30 — MOA 美術館',
+      'd1.s3': '17:00 – 19:00 — 熱海市區,在 Sun Beach 附近用晚餐',
+      'd1.s4': '<strong>20:20 – 20:40 — 熱海海上煙火大會</strong>',
+      'd1.s5': '約 21:30 — 搭電車返回小田原',
+      'd1.note': '<strong>小提醒:</strong>煙火開始前先買好回程車票。熱海站會非常擁擠 — 可以先到咖啡店休息 30 分鐘,等人潮散去。',
+      // Day 2
+      'd2.title': '依天氣決定的彈性日',
+      'd2.summary': '5月25日 08:00 取車。每天早上看富士山的能見度,再決定當日行程。05:00 起床,約 06:00 出發,約 19:00 回程。<strong>5月29日 18:30 前務必還車。</strong>',
+      'b.hakone.t': '⛩ 箱根環線',
+      'b.hakone.m': '輕鬆 · 距小田原 40 分鐘',
+      'b.hakone.1': '箱根神社 + 平和鳥居',
+      'b.hakone.2': '大涌谷(火山噴氣孔、黑蛋)',
+      'b.hakone.3': '舊東海道杉並木',
+      'b.hakone.4': '箱根蘆之湖展望公園',
+      'b.hakone.5': '箱根強羅公園(可選)',
+      'b.fuji.t': '☀ 富士五湖',
+      'b.fuji.m': '挑富士山清晰的日子 · 距小田原約 2 小時',
+      'b.fuji.1': '新倉山淺間公園(忠靈塔 · 398 階)',
+      'b.fuji.2': '金鳥居',
+      'b.fuji.3': '忍野八海',
+      'b.fuji.4': '山中湖全景',
+      'b.izuh.t': '🌊 伊豆 — 硬核行程',
+      'b.izuh.m': '05:00 出發 · 一路南下',
+      'b.izuh.1': '下田公園(城山)',
+      'b.izuh.2': '白濱海灘(視天氣而定)',
+      'b.izuh.3': '河津七瀑布',
+      'b.izuh.4': '淨蓮瀑布',
+      'b.izue.t': '🏞 伊豆 — 輕鬆行程',
+      'b.izue.m': '沿稜線開車賞景',
+      'b.izue.1': '伊豆 Skyline 兜風',
+      'b.izue.2': '小室山稜線步道「Misora」',
+      'b.izue.3': '大室山(纜車登火山口)',
+      'b.izue.4': '城崎海岸 + 門脇吊橋',
+      'b.gotemba.t': '🛍 御殿場 Premium Outlets',
+      'b.gotemba.m': '下雨備案 · 距小田原約 40 分鐘 · 室內行程',
+      'b.gotemba.1': '富士山腳下 300 多間暢貨店',
+      'b.gotemba.2': '美食街 + 餐廳可用午餐',
+      'b.gotemba.3': '園區內有摩天輪和溫泉',
+      'b.gotemba.4': '預報下雨時的好備案(例:5月27日)',
+      // Day 3
+      'd3.title': '搬到東京 · 足立煙火',
+      'd3.summary': '一大早從小田原搭車到東京(約 2 小時)放行李,然後到東京車站/新宿購物,下午到上野,接著到荒川看煙火。',
+      'd3.s1': '清晨 — 整理行李,小田原 → 東京(約 2 小時)',
+      'd3.s2': '上午 — 在浦安 Bay Hotel 放行李',
+      'd3.s3': '中午 — 購物 · 東京車站或新宿',
+      'd3.s4': '下午 — 上野(公園、博物館、阿美橫町)',
+      'd3.s5': '約 17:00 — 前往荒川河小菅公園',
+      'd3.s6': '<strong>19:20 – 20:20 — 足立煙火大會</strong>',
+      'd3.note': '<strong>提醒:</strong>預計 70 萬人參加。17:00 前到場才搶得到位置。離場走町屋、千住大橋或足立小台 — 別走北千住。',
+      // Day 4
+      'd4.title': '橫濱一日遊',
+      'd4.summary': '海濱漫步、傳統庭園、博物館。最後到大棧橋看夜景。週末這裡比鎌倉舒服多了。',
+      'd4.s1': '三溪園',
+      'd4.s2': '未來玫瑰園(山下公園)',
+      'd4.s3': '紅磚倉庫 + 海港',
+      'd4.s4': '橫濱港博物館',
+      'd4.s5': 'Yokohama Air Cabin(櫻木町纜車)',
+      'd4.s6': '港見丘公園展望台',
+      'd4.s7': '<strong>大棧橋 — 黃昏與夜景</strong>',
+      // Day 5
+      'd5.title': '鎌倉 + 江之島',
+      'd5.summary': '平日人少很多。寺廟、商店街、海邊。',
+      'd5.s1': '長谷寺',
+      'd5.s2': '小町通商店街',
+      'd5.s3': '明月院',
+      'd5.s4': '江之島(海風、夕陽)',
+      'd5.note': '<strong>待定:</strong>鶴岡八幡宮 — 時間夠的話可加(就在小町通底,步行約 5 分鐘)。',
+      // Day 6
+      'd6.title': '返程',
+      'd6.summary': '半天買伴手禮、市區散步。20:30 前到羽田機場,搭 23:30 班機。',
+      'd6.s1': '上午 — 買伴手禮、輕鬆逛街',
+      'd6.s2': '約 17:00 — 收行李、退房',
+      'd6.s3': '約 19:00 — 從浦安出發前往羽田',
+      'd6.s4': '<strong>23:30 — 飛往吉隆坡</strong>',
+      'b.tokyo.t': '🚶 東京散步路線推薦',
+      'b.tokyo.m': '任選 · 都在東京市中心附近',
+      'b.tokyo.1': '東京車站丸之內大樓(建築)',
+      'b.tokyo.2': '日本銀行總行(明治時期外觀)',
+      'b.tokyo.3': '築地本願寺(印度風格)',
+      'b.tokyo.4': '國立新美術館(六本木)',
+      // Regions
+      'r.home.title': '住宿據點',
+      'r.home.desc': '住宿、進出機場、還車的地點',
+      'r.home.1t': '羽田機場 · 第 3 航廈',
+      'r.home.1d': '6月2日 23:30 班機飛吉隆坡',
+      'r.home.2t': '小田原 · 民宿區',
+      'r.home.3t': 'Bay Hotel 浦安站前',
+      'r.home.4t': 'Toyota 租車 · 小田原鴨宮店',
+      'r.home.4d': '5月25日取車 · 5月29日還車 · 距鴨宮站步行 10 分鐘',
+      'r.atami.title': '熱海',
+      'r.atami.desc': '5月24日 · 美術館與煙火',
+      'r.atami.1t': 'MOA 美術館', 'r.atami.1d': '山頂 · 黃昏時段的海灣景觀',
+      'r.atami.2t': '熱海 Sun Beach', 'r.atami.2d': '觀賞煙火 · 20:20–20:40',
+      'r.hakone.title': '箱根', 'r.hakone.desc': '5月25–29日 · 輕鬆環線一日遊',
+      'r.hakone.1t': '平和鳥居(箱根神社)', 'r.hakone.1d': '湖中經典鳥居',
+      'r.hakone.2t': '大涌谷', 'r.hakone.2d': '火山噴氣孔 · 黑蛋',
+      'r.hakone.3t': '舊東海道杉並木', 'r.hakone.3d': '走過 400 年歷史的杉木道',
+      'r.hakone.4t': '箱根蘆之湖展望公園', 'r.hakone.4d': '湖景全貌 · 晴天可見富士山',
+      'r.hakone.5t': '箱根強羅公園', 'r.hakone.5d': '庭園 · 可選景點',
+      'r.fuji.title': '富士五湖', 'r.fuji.desc': '挑富士山清晰的日子 · 距小田原約 2 小時',
+      'r.fuji.1t': '新倉山淺間公園', 'r.fuji.1d': '忠靈塔 · 398 階',
+      'r.fuji.2t': '金鳥居', 'r.fuji.2d': '金色鳥居框住富士山',
+      'r.fuji.3t': '忍野八海', 'r.fuji.3d': '清澈見底的泉水池',
+      'r.fuji.4t': '山中湖全景台', 'r.fuji.4d': '山中湖觀景點',
+      'r.izus.title': '南伊豆', 'r.izus.desc': '硬核行程 · 伊豆最南端',
+      'r.izus.1t': '下田公園(城山)', 'r.izus.1d': '山坡庭園 · 繡球花',
+      'r.izus.2t': '白濱海灘', 'r.izus.2d': '白沙海灘(視天氣而定)',
+      'r.izus.3t': '河津七瀑布', 'r.izus.3d': '森林瀑布健行',
+      'r.izus.4t': '淨蓮瀑布', 'r.izus.4d': '瀑布 + 山葵田',
+      'r.izue.title': '東伊豆', 'r.izue.desc': '輕鬆行程 · 沿稜線開車 + 海岸',
+      'r.izue.1t': '小室山稜線步道「Misora」', 'r.izue.1d': '復古纜車 + 360° 山頂步道',
+      'r.izue.2t': '大室山', 'r.izue.2d': '纜車登火山口',
+      'r.izue.3t': '城崎海岸', 'r.izue.3d': '熔岩懸崖海岸線',
+      'r.izue.4t': '門脇吊橋', 'r.izue.4d': '壯觀的懸崖吊橋 + 燈塔',
+      'r.gotemba.title': '御殿場 Premium Outlets', 'r.gotemba.desc': '雨天備案 · 富士山附近的室內購物',
+      'r.gotemba.1t': '御殿場 Premium Outlets', 'r.gotemba.1d': '300 多間店 · 美食街 · 富士山景',
+      'r.tokyo30.title': '東京', 'r.tokyo30.desc': '5月30日 · 移動日 + 煙火',
+      'r.tokyo30.1t': '東京車站 / 新宿', 'r.tokyo30.1d': '放完行李後的中午購物',
+      'r.tokyo30.2t': '上野(上野公園)', 'r.tokyo30.2d': '公園、博物館、阿美橫町 · 煙火前的下午',
+      'r.tokyo30.3t': '荒川河小菅公園', 'r.tokyo30.3d': '足立煙火 · 19:20–20:20',
+      'r.yoko.title': '橫濱', 'r.yoko.desc': '5月31日 · 海港、庭園、夜景',
+      'r.yoko.1t': '三溪園', 'r.yoko.1d': '傳統日式庭園',
+      'r.yoko.2t': '未來玫瑰園', 'r.yoko.2d': '山下公園 · 160 多種玫瑰',
+      'r.yoko.3t': '紅磚倉庫', 'r.yoko.3d': '歷史悠久的港區',
+      'r.yoko.4t': '橫濱港博物館', 'r.yoko.4d': '港口歷史 + 日本丸帆船',
+      'r.yoko.5t': 'Yokohama Air Cabin', 'r.yoko.5d': '櫻木町纜車 · 白天或夜晚都美',
+      'r.yoko.6t': '大棧橋', 'r.yoko.6d': '木製甲板 · 經典夜景',
+      'r.kama.title': '鎌倉 + 江之島', 'r.kama.desc': '6月1日 · 寺廟與海邊',
+      'r.kama.1t': '長谷寺', 'r.kama.1d': '山坡寺廟 · 可看海',
+      'r.kama.2t': '小町通商店街', 'r.kama.2d': '約 360 公尺 · 美食、伴手禮、手工藝',
+      'r.kama.3t': '明月院', 'r.kama.3d': '圓窗景觀 · 繡球花寺',
+      'r.kama.4t': '江之島', 'r.kama.4d': '小島 · 神社 · 夕陽勝地',
+      'r.tokyoc.title': '東京市中心', 'r.tokyoc.desc': '6月2日 · 散步景點 · 任選',
+      'r.tokyoc.1t': '東京車站 · 丸之內大樓', 'r.tokyoc.1d': '建築 · 商店 · 咖啡店',
+      'r.tokyoc.2t': '日本銀行總行', 'r.tokyoc.2d': '明治時期外觀 · 週末休館',
+      'r.tokyoc.3t': '築地本願寺', 'r.tokyoc.3d': '印度風佛教建築',
+      'r.tokyoc.4t': '國立新美術館', 'r.tokyoc.4d': '六本木 · 週二休館 — 請先確認',
+      // Essentials
+      'sec.emergency': '緊急聯絡',
+      'em.police': '警察', 'em.police.d': '輕觸撥打 · 警察',
+      'em.amb': '救護車 / 消防', 'em.amb.d': '輕觸撥打 · 救急・消防',
+      'sec.addresses': '地址 · 輕觸複製',
+      'ad.odawara': '小田原民宿 · 5月24日–30日',
+      'ad.odawara.en': '9-1 Kazamatsuri, Odawara, Kanagawa 250-0032<br>最近的巴士站:東風祭',
+      'ad.bay': 'Bay Hotel 浦安站前 · 5月30日–6月2日',
+      'ad.bay.en': 'Bay Hotel Urayasu-ekimae<br>1-15-28 Kitazakae, Urayasu, Chiba 279-0002',
+      'ad.tap': '輕觸複製',
+      'ad.copied': '已複製',
+      'sec.before': '抵達前準備',
+      'vjw.t': 'Visit Japan Web', 'vjw.d': '入境 + 海關登記',
+      'sec.weather': '天氣與富士山',
+      'tenki.d': '日本天氣預報',
+      'fuji.d': '富士山即時影像 + 能見度',
+      'sec.drive': '在日本開車',
+      'dr.signs.t': '交通標誌', 'dr.signs.d': '規範、警告、方向、指引標誌',
+      'dr.rules.t': '交通規則', 'dr.rules.d': '靠左行駛 · 速限 · 高速公路',
+      'dr.fuel.t': '加油', 'dr.fuel.d': '自助加油站 · 常用日文',
+      'sec.flights': '航班',
+      'fl.dep': '去程 · NH886', 'fl.ret': '回程 · NH885',
+      'sec.events': '重點活動',
+      'ev.atami.t': '熱海海上煙火大會', 'ev.atami.d': '5月24日(日) · 20:20–20:40 · 熱海灣',
+      'ev.adachi.t': '足立煙火大會', 'ev.adachi.d': '5月30日(六) · 19:20–20:20 · 荒川河',
+      // Next Up countdown event titles
+      'ev.meet': '在小田原站集合',
+      'ev.atami': '熱海海上煙火',
+      'ev.return': '還租車',
+      'ev.adachi': '足立煙火',
+      'ev.flight': 'NH885 飛往吉隆坡',
+      // Map popup
+      'popup.open': '用蘋果地圖開啟 →',
+      'sec.rem': '提醒事項',
+      'rem.car.t': '還車截止時間', 'rem.car.d': '5月29日 18:30 準時 · 逾時收費',
+      'rem.bag.t': 'Bay Hotel 寄放行李', 'rem.bag.d': '5月30日購物與看博物館前先放行李',
+      'rem.fw.t': '熱海煙火回程', 'rem.fw.d': '看煙火「前」先買好回程車票'
+    }
+  };
+
+  // The detail copy below "May 24 – May 30" (etc.) is the trip-date range
+  // and stays in English everywhere — dates are universal, no need to
+  // translate "May" into 5月 just to add visual noise.
+
+  const LANG_KEY = 'tripLang';
+  let currentLang = (function() {
+    try {
+      const stored = localStorage.getItem(LANG_KEY);
+      if (stored === 'en' || stored === 'zh') return stored;
+    } catch (e) {}
+    // Default to browser language if it starts with zh, else English
+    const nav = (navigator.language || 'en').toLowerCase();
+    return nav.startsWith('zh') ? 'zh' : 'en';
+  })();
+
+  function applyLanguage(lang) {
+    const dict = I18N[lang] || I18N.en;
+    document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+    // Plain-text nodes
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    // Nodes containing inline HTML (<strong>, <br>, etc.)
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    // Sync all language-toggle button states across all tabs
+    document.querySelectorAll('.lang-toggle').forEach(group => {
+      group.querySelectorAll('button[data-lang]').forEach(btn => {
+        const active = btn.dataset.lang === lang;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+    });
+  }
+
+  // Wire up every toggle on the page (all three heroes share state)
+  function bindLanguageToggles() {
+    document.querySelectorAll('.lang-toggle button[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.lang;
+        if (target === currentLang) return;
+        currentLang = target;
+        try { localStorage.setItem(LANG_KEY, target); } catch (e) {}
+        // Brief fade so the swap feels intentional, not jarring
+        document.body.classList.add('lang-switching');
+        // Defer the actual swap one frame so the fade can start
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            applyLanguage(currentLang);
+            // Dynamic strings that aren't covered by static data-i18n —
+            // each is a no-op if its function/element isn't ready yet.
+            if (typeof updateNextUp === 'function') updateNextUp();
+            if (typeof refreshTodayPill === 'function') refreshTodayPill();
+            if (typeof refreshFocusChipLabels === 'function') refreshFocusChipLabels();
+            requestAnimationFrame(() => {
+              document.body.classList.remove('lang-switching');
+            });
+          });
+        });
+      });
+    });
+  }
+
+  // Helper for code that builds DOM after page-load (focus chips, popups)
+  function t(key) {
+    const dict = I18N[currentLang] || I18N.en;
+    return dict[key] !== undefined ? dict[key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
+  }
+
+  // Rebuilds the "Today · 5月25日" pill on a multi-day card when the language
+  // changes. The static "Today" label is already handled by data-i18n; this
+  // covers the date suffix that gets concatenated in JS.
+  const monthsEN_TOP = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function refreshTodayPill() {
+    const now = (typeof nowDate === 'function') ? nowDate() : new Date();
+    document.querySelectorAll('.day-card.is-today').forEach(card => {
+      const start = card.dataset.start;
+      const end = card.dataset.end;
+      if (!start || !end || start === end) return;
+      const pill = card.querySelector('.today-pill');
+      if (!pill) return;
+      const word = t('today');
+      pill.textContent = currentLang === 'zh'
+        ? word + ' · ' + (now.getMonth() + 1) + '月' + now.getDate() + '日'
+        : word + ' · ' + monthsEN_TOP[now.getMonth()] + ' ' + now.getDate();
+    });
+  }
+
+  // Re-translates the dynamically generated focus chips ("All" / "All trip" /
+  // region names). Region names are static so we leave them; only the two
+  // generated labels need updating.
+  function refreshFocusChipLabels() {
+    const chips = document.querySelectorAll('#focus-chips button');
+    if (!chips.length) return;
+    // First chip is always "All", last is always "All trip" (region chips sit between)
+    chips[0].textContent = t('chip.all');
+    if (chips.length >= 2) chips[chips.length - 1].textContent = t('chip.alltrip');
+  }
+
+  // Apply on first paint, then bind. Doing apply first prevents any flash.
+  applyLanguage(currentLang);
+  bindLanguageToggles();
+
   // ───────────────────────────────────────────────────────────────────
   // Dev affordance: ?date=YYYY-MM-DD or ?date=YYYY-MM-DDTHH:MM overrides
   // the current time, in JST. Lets us preview "Today" highlight, the
@@ -1567,12 +2210,12 @@
         document.body.removeChild(ta);
       }
       const hint = row.querySelector('.copy-hint');
-      const originalText = hint.textContent;
       row.classList.add('copied');
-      hint.textContent = 'Copied';
+      hint.textContent = t('ad.copied');
       setTimeout(() => {
         row.classList.remove('copied');
-        hint.textContent = originalText;
+        // Pull from current language dict (not stale captured value)
+        hint.textContent = t('ad.tap');
       }, 1800);
     });
   });
@@ -1611,17 +2254,24 @@
       + String(now.getMonth() + 1).padStart(2, '0') + '-'
       + String(now.getDate()).padStart(2, '0');
     let todayCard = null;
+    // Month names in both languages — "Today · May 24" / "今天 · 5月24日"
+    const monthsEN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     document.querySelectorAll('.day-card').forEach(card => {
       const start = card.dataset.start;
       const end = card.dataset.end;
       if (!start || !end) return;
       if (today >= start && today <= end) {
         card.classList.add('is-today');
-        // Update pill text to include the actual date when range spans multiple days
+        // Update pill text to include the actual date when range spans multiple days.
+        // We override applyLanguage's plain "Today" because the date suffix is useful here.
         const pill = card.querySelector('.today-pill');
         if (pill && start !== end) {
-          const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          pill.textContent = 'Today · ' + monthNames[now.getMonth()] + ' ' + now.getDate();
+          const todayWord = t('today');
+          if (currentLang === 'zh') {
+            pill.textContent = todayWord + ' · ' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+          } else {
+            pill.textContent = todayWord + ' · ' + monthsEN[now.getMonth()] + ' ' + now.getDate();
+          }
         }
         todayCard = card;
       }
@@ -1629,6 +2279,15 @@
     return todayCard;
   }
   const todayCard = highlightToday();
+
+  // When the language flips, the today pill loses its date suffix (applyLanguage
+  // resets it to just "Today" / "今天"). Re-decorate after each switch.
+  document.querySelectorAll('.lang-toggle button[data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Defer past the apply pass so we overwrite, not the other way round
+      setTimeout(highlightToday, 50);
+    });
+  });
 
   // Auto-scroll to today's card on first Itinerary visit per session
   let itineraryScrolled = false;
@@ -1653,11 +2312,11 @@
   // Each event maps to a day-card by `targetDate` for tap-to-scroll.
   const JST_OFFSET_MIN = 9 * 60;
   const events = [
-    { title: 'Meet at Odawara station',  date: '2026-05-24', time: '14:00', targetDate: '2026-05-24' },
-    { title: 'Atami Marine Fireworks',   date: '2026-05-24', time: '20:20', targetDate: '2026-05-24' },
-    { title: 'Return rental car',        date: '2026-05-29', time: '18:30', targetDate: '2026-05-29' },
-    { title: 'Adachi Fireworks',         date: '2026-05-30', time: '19:20', targetDate: '2026-05-30' },
-    { title: 'Flight NH885 to KUL',      date: '2026-06-02', time: '23:30', targetDate: '2026-06-02' }
+    { titleKey: 'ev.meet',   date: '2026-05-24', time: '14:00', targetDate: '2026-05-24' },
+    { titleKey: 'ev.atami',  date: '2026-05-24', time: '20:20', targetDate: '2026-05-24' },
+    { titleKey: 'ev.return', date: '2026-05-29', time: '18:30', targetDate: '2026-05-29' },
+    { titleKey: 'ev.adachi', date: '2026-05-30', time: '19:20', targetDate: '2026-05-30' },
+    { titleKey: 'ev.flight', date: '2026-06-02', time: '23:30', targetDate: '2026-06-02' }
   ];
 
   // Convert a JST date+time string to a real UTC Date object
@@ -1678,7 +2337,7 @@
 
   // Format "in 2h 14m" / "in 47m" / "in 3d 5h" / "Starting now" / "Happening now"
   function formatCountdown(ms) {
-    if (ms <= 0 && ms > -90 * 60 * 1000) return 'Now';   // within 90 min after start, still relevant
+    if (ms <= 0 && ms > -90 * 60 * 1000) return t('nextup.starting');   // within 90 min after start, still relevant
     const totalMin = Math.floor(ms / 60000);
     const days = Math.floor(totalMin / 1440);
     const hours = Math.floor((totalMin % 1440) / 60);
@@ -1708,9 +2367,9 @@
       return;
     }
 
-    nuTitle.textContent = e.title;
+    nuTitle.textContent = t(e.titleKey);
     nuCount.textContent = formatCountdown(e.msUntil);
-    nuLabel.textContent = e.msUntil <= 0 ? 'Happening now' : 'Next up';
+    nuLabel.textContent = e.msUntil <= 0 ? t('nextup.now') : t('nextup.label');
 
     const URGENT = 24 * 60 * 60 * 1000;
     nextUpEl.classList.toggle('urgent', e.msUntil <= URGENT);
@@ -1794,7 +2453,7 @@
     });
     const safeName = name.replace(/"/g, '&quot;');
     const popupHtml = '<div class="popup-name">' + safeName + '</div>'
-      + '<a class="popup-link" href="' + href + '">Open in Apple Maps →</a>';
+      + '<a class="popup-link" href="' + href + '">' + t('popup.open') + '</a>';
     const marker = L.marker([lat, lng], { icon }).bindPopup(popupHtml);
     return marker;
   }
@@ -1810,7 +2469,7 @@
     try {
       await loadLeaflet();
     } catch (e) {
-      mapCanvasView.innerHTML = '<div style="padding:24px;text-align:center;color:var(--label-secondary);font-size:14px;">Map failed to load — check your connection</div>';
+      mapCanvasView.innerHTML = '<div style="padding:24px;text-align:center;color:var(--label-secondary);font-size:14px;">' + t('map.error') + '</div>';
       return;
     }
     const L = window.L;
@@ -1829,7 +2488,12 @@
     document.querySelectorAll('#map-list-view .region-card').forEach(card => {
       const start = card.dataset.start;
       const end = card.dataset.end;
-      const title = card.querySelector('.region-title')?.textContent.trim() || '';
+      const titleEl = card.querySelector('.region-title');
+      const title = titleEl?.textContent.trim() || '';
+      // Grab the title's translation key so focus chips can re-translate on lang switch.
+      // Multi-day flex regions share a `data-group` like "Hakone", which we don't
+      // translate directly; instead we read the i18n key right off the title element.
+      const groupKey = titleEl?.getAttribute('data-i18n') || null;
       const group = card.dataset.group || title;
       const coords = [];
       card.querySelectorAll('.map-row').forEach(row => {
@@ -1856,7 +2520,7 @@
       });
       // Only undated cards (Home Bases) are skipped from region-focus targeting
       if (start && end && coords.length) {
-        regionPins.push({ title, group, start, end, coords });
+        regionPins.push({ title, group, groupKey, start, end, coords });
       }
     });
 
@@ -1895,7 +2559,8 @@
     // "All flex" chip → all matching regions combined
     const all = document.createElement('button');
     all.type = 'button';
-    all.textContent = 'All';
+    all.setAttribute('data-i18n', 'chip.all');
+    all.textContent = t('chip.all');
     all.classList.add('active');
     focusChipsEl.appendChild(all);
     const chips = [all];
@@ -1905,11 +2570,17 @@
       all.classList.add('active');
       focusOn(allCoords);
     });
-    // One chip per matching region
+    // One chip per matching region — use the region-card's own translated title
     matches.forEach(r => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.textContent = r.group;
+      // Region card's title is translated, so mirror it via its i18n key
+      if (r.groupKey) {
+        b.setAttribute('data-i18n', r.groupKey);
+        b.textContent = t(r.groupKey);
+      } else {
+        b.textContent = r.group;
+      }
       focusChipsEl.appendChild(b);
       chips.push(b);
       b.addEventListener('click', () => {
@@ -1924,7 +2595,8 @@
     focusChipsEl.appendChild(div);
     const allTrip = document.createElement('button');
     allTrip.type = 'button';
-    allTrip.textContent = 'All trip';
+    allTrip.setAttribute('data-i18n', 'chip.alltrip');
+    allTrip.textContent = t('chip.alltrip');
     focusChipsEl.appendChild(allTrip);
     chips.push(allTrip);
     allTrip.addEventListener('click', () => {
